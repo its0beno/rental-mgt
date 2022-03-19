@@ -1,0 +1,57 @@
+{% extends 'rent/login.html' %}
+
+{% load static %}
+
+{% block login_box %}
+<div class="login-box">
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <a href="{% url 'home' %}" class="h3">Your Building Name</a>
+    </div>
+    <div class="card-body">
+      <p class="login-box-msg">Change Security</p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <input type="text" name="first_name" value="{{ first_name }}" class="form-control" placeholder="First Name">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <input type="text" name="last_name" value="{{ last_name }}" class="form-control" placeholder="Last Name">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <input type="text" name="email" value="{{ email }}" class="form-control" placeholder="Email">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-block">Change</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+{% endblock login_box %}

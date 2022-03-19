@@ -1,0 +1,102 @@
+{% extends 'rent/homepage.html' %}
+
+{% block main_page %}
+<div class="content">
+    <div class="container-fluid">            
+        <div class="card">
+            <div class="card-header bg-primary">
+                <h3 class="card-title">
+                    {{request.user.get_full_name}}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Role
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                    {% if data.groups.first == None %}
+                                    {% endif %}
+                                        {% if data.groups.all.count > 1 %}
+                                            {% for group in data.groups.all %}
+                                                {% if group != data.groups.last %}
+                                                
+                                                    {{ group }},
+
+                                                {% else %}
+
+                                                    {{ group }}
+
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% if data.groups.first %}
+                                                {{ data.groups.first }}
+                                            {% else %}
+                                                Not Assigned
+                                            {% endif %}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Username
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                    {{ request.user.get_username}} 
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Email
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                        <span class="">{{request.user.email}}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <dl class="row">
+                    <dt class="col-sm-4">
+                        Date Created
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ request.user.date_joined}}
+                    </dd>
+                    <dt class="col-sm-4">
+                        First Name
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ request.user.first_name}}
+                    </dd>
+                    <dt class="col-sm-4">
+                        Last Name
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ request.user.last_name}}
+                    </dd>
+                    <div class="card-footer w-100 ">
+                        <a class="btn btn-primary pr-3 " href="{% url 'confirm-identity' %}" >Security Question</a>
+                        <a class=" btn btn-danger ml-auto mr-auto " href= "{% url 'user-change-password' %}">Change Password</a>
+                        <a class=" btn btn-info ml-auto mr-auto " href= "{% url 'edit-info' %}">Edit Info</a>
+                        
+                    </div>
+
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main_page %}

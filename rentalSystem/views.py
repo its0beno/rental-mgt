@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from rent.models import UserAdditionalInfo
 from .forms import PasswordChangeForm
 
+
 #redirectng the user to login page after logout
 def logout(request):
     logout_(request)

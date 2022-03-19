@@ -197,7 +197,7 @@ class Report(models.Model):
         if amount.get('amount__sum') is None:
             return Decimal(0)
 
-        return amount.get('amount__sum', 0)
+        return amount.get('amount__sum')
     
 
     @property

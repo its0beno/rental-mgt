@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
+
+from rentalSystem.views import logout
 from .forms import *
 from .mixins import *
 
@@ -500,6 +502,12 @@ class ReportListView(LoginRequiredMixin, ReportViewPermissionMixin, ListView):
 
         return {**context, **permissions(self.request)} 
 
+    def get_queryset(self):
+        objects = Report.objects.all()
+        for object in objects:
+            object.save()
+        return super().get_queryset()
+    
 
 
 class UserListView(LoginRequiredMixin, UserViewPermissionMixin, ListView):
@@ -552,7 +560,7 @@ class UserUpdateView(LoginRequiredMixin,UserUpdatePermissionMixin, UpdateView):
 
 
 
-class UserAdditionalInfoUpdateView(UpdateView):
+class UserAdditionalInfoUpdateView(LoginRequiredMixin, UserUpdatePermissionMixin, UpdateView):
     model = UserAdditionalInfo
     template_name = "rent/register.html"
     form_class = UserAdditionalInfoForm
@@ -561,7 +569,7 @@ class UserAdditionalInfoUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["objects"] = self.get_object(self).user
-        return context
+        return {**context, **permissions(self.request)}
 
     def get_object(self, queryset=None):
         
@@ -583,4 +591,100 @@ class UserAdditionalInfoUpdateView(UpdateView):
         
 
         
+@login_required
+def ChangeSecurity(request):
+    security = UserAdditionalInfo.objects.get(user=request.user)
+    confirmed = request.session.get("confirmed", False)
+    if not confirmed:
+        messages.error(request, "You're not confirmed yet.")
+        return redirect("confirm-identity")
+
+    if request.method == "POST":
+        security_question = request.POST.get("security_question")
+        security_answer = request.POST.get("security_answer")
+        
+        security.security_question = security_question
+        security.security_answer = security_answer
+
+        security.save()
+
+        del(request.session['confirmed'])
+
+        return redirect("home")
     
+    
+    context={
+        "security_answer" : security.security_answer,
+        "security_question" : security.security_question,
+    }
+    return render(request, "rent/change-security.html", context)
+
+
+def CheckPassword(request):
+    if request.method == "POST":
+        password = request.POST.get("password")
+        if not request.user.check_password(password):
+            messages.error(request, "Wrong Password")
+            return redirect("confirm-identity")
+        else:
+            request.session["confirmed"] = True
+            return redirect("change-security")
+    
+    return render(request, "rent/check-password.html")
+
+
+
+
+class UserDetailView(LoginRequiredMixin, UserViewPermissionMixin, DetailView):
+    model = User
+    template_name = "rent/user-detail.html"
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "User"
+        context["open"] = "userdetail"
+        context['obj_model'] = "user"
+
+        return {**context, **permissions(self.request)} 
+
+
+@login_required
+def UserDetail(request):
+    object = request.user
+    context = {
+        "user": object,
+        "title": "User",
+        "obj_model": "user",
+        **permissions(request),
+    }
+
+    return render(request, "rent/user-detail.html", context)
+
+@login_required
+def EditUserData(request):
+    if request.method == "POST":
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        email = request.POST.get("email")
+
+        user = request.user
+
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+
+        user.save()
+
+        messages.success(request, "Saved")
+        return redirect("user-info")
+
+    user = request.user
+
+    context = {
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "email": user.email
+    }
+
+    return render(request, "rent/change-user-info.html", context)

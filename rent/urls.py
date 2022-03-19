@@ -1,9 +1,14 @@
-from django.urls import path 
+from django.urls import path, reverse_lazy 
 from . import views
-from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import PasswordChangeView
 
 urlpatterns = [
     path('' , views.dashboard_page , name = 'home'),
+    path('user/', views.UserDetail, name="user-info"),
+    path('user/edit/', views.EditUserData, name="edit-info"),
+    path('user/confirm-identity', views.CheckPassword, name="confirm-identity"),
+    path('user/change-security/', views.ChangeSecurity, name="change-security"),
+    path('user/change-password/', PasswordChangeView.as_view(template_name="rent/change-password.html", success_url = reverse_lazy("user-info")), name="user-change-password"),
     path("register-room/", views.RoomCreateView.as_view() , name="register-rooms"),
     path("list-rooms/", views.RoomListView.as_view(), name="list-rooms"),
     path("list-rooms/filter=<str:filter>/", views.RoomListView.as_view(), name="list-rooms"),
@@ -30,5 +35,6 @@ urlpatterns = [
     path("register-user/", views.UserCreateView.as_view(), name = "register-user"),
     path("update-user/<int:pk>", views.UserUpdateView.as_view(), name = "update-user"),
     path("update-info/<int:pk>", views.UserAdditionalInfoUpdateView.as_view(), name = "update-info"),
+    path("user-detail/<int:pk>", views.UserDetailView.as_view(), name = "user-detail"),
     
 ]
