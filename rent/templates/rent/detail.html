@@ -1,0 +1,160 @@
+{% extends 'rent/homepage.html' %}
+
+{% block main_page %}
+<div class="content">
+    <div class="container-fluid">            
+        <div class="card">
+            {% if obj_model == 'renter' %}
+            <div class="card-header bg-primary">
+                <h3 class="card-title">
+                    Renter: {{object.full_name}}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Room
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                    {{object.room}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Price of Room
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                    {{object.room.total_price}} Birr.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Admitted Date
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                        <span class="">{{object.date_admitted}}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <dl class="row">
+                    <dt class="col-sm-4">
+                        Room Type
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.room.room_type}}
+                    </dd>
+                    <dt class="col-sm-4">
+                        Width
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.room.width }} m
+                    </dd>
+                    <dt class="col-sm-4">
+                        Length
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.room.length }} m
+                    </dd>
+                    <dt class="col-sm-4">
+                        Area
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.room.area }} m2
+                    </dd>
+                </dl>
+            </div>
+            {% else %}
+            <div class="card-header bg-primary">
+                <h3 class="card-title">
+                    Room: {{object.room_no}}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Room Type
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                    {{object.room_type}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Price of Room
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                    {{object.total_price}} Birr.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Status
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                    {% if object.status == "occupied" %}
+                                        <span class="text-danger">Occupied</span>
+                                    {% else %}
+                                        <span class="text-success">Free</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <dl class="row">
+                    <dt class="col-sm-4">
+                        Floo No
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.floor_no }}
+                    </dd>
+                    <dt class="col-sm-4">
+                        Width
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.width }} m
+                    </dd>
+                    <dt class="col-sm-4">
+                        Length
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.length }} m
+                    </dd>
+                    <dt class="col-sm-4">
+                        Area
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.area }} m2
+                    </dd>
+                </dl>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock main_page %}

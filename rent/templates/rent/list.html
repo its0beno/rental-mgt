@@ -1,0 +1,190 @@
+{% extends 'rent/homepage.html' %}
+{% load static %}
+
+{% block main_page %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="card">
+            
+            <div class="card-header bg-primary">
+                <h3 class="card-title ">List of All {{ obj_model.capitalize }}</h3>
+            </div>
+            <div class="card-body">
+                <a class="btn btn-outline-primary float-right mb-3"
+                {% if obj_model == 'renter' %}
+                href="{% url 'register-renters' %}">Add New Renter</a>
+                {% elif obj_model == 'room' %}
+                href="{% url 'register-rooms' %}">Add New Room</a>
+                {% elif obj_model == 'payment' %}
+                href="{% url 'register-payments' %}"> Add New Payment </a>
+
+                {% endif %}
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        {% if obj_model == "renter" %}
+                            <tr>
+                                <th>#</th>
+                                <th>Full Name</th>
+                                <th>Phone Number</th>
+                                <th>Room No.</th>
+                                <th>Action</th>
+                            </tr>
+                        {% elif obj_model == 'room' %}
+                            <tr>
+                                <th>#</th>
+                                <th>Room No.</th>
+                                <th>Total Price</th>
+                                <th>Area</th>
+                                <th>Occupation</th>
+                                <th>Action</th>
+                            </tr>
+                        {% elif obj_model == 'payment'%}
+                            <tr>
+                                <th>#</th>
+                                <th>Renter</th>
+                                <th>Room No</th>
+                                <th>No Of Months</th>
+                                <th>Amount Paid</th>
+                                <th>Actions</th>
+
+                            </tr>
+                        {% endif %}
+                    </thead>
+                    <tbody>
+                    {% if object_list.count > 0 %}
+                        {% for data in object_list %}
+                            {% if obj_model == "renter" %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.full_name }}</td>
+                                <td>{{ data.phone }}</td>        
+                                <td >{{data.room}}</td>
+                                
+                                <td class="product-action"><a class="btn btn-primary btn-sm" href="{% url 'detail-renter' pk=data.id %}">
+                                    <i class="fas fa-folder"></i>
+                                    View</a>
+                                    <a class="btn btn-info btn-sm" href="{% url 'update-renter' pk=data.id %}">
+                                        <i class="fas fa-pencil-alt">
+                                        </i>
+                                        Edit
+                                    </a>
+                                    <a class="btn btn-danger btn-sm" href="{% url 'delete-renter' pk=data.id %}">
+                                        <i class="fas fa-trash">
+                                        </i>
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        {% elif obj_model == "room" %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.room_no }}</td>
+                                <td>{{ data.total_price }}</td>
+                                <td>{{ data.area }}</td>
+                                {% if data.status == "occupied" %}
+                                    <td class = "text-danger">Occupied</td>
+                                {% elif data.status == "vacant" %}
+                                    <td class = "text-success">Vacant</td>
+                                {% elif data.status == "under maintenance" %}
+                                    <td class = "text-warning">Under Maintenance</td>
+                                {% elif data.status == "not for rent" %}
+                                    <td class = "text-secondary">Not For Rent</td>
+                                {% else %}
+                                    <td class = "text-info">Not Yet Assigned</td>
+                                {% endif %}
+                                <td class="product-action"><a class="btn btn-primary btn-sm" href="{% url 'detail-room' data.id %}">
+                                    <i class="fas fa-folder"></i>
+                                    View</a>
+                                    <a class="btn btn-info btn-sm" href="{% url 'update-room' pk=data.id %}">
+                                        <i class="fas fa-pencil-alt">
+                                        </i>
+                                        Edit
+                                    </a>
+                                    <a class="btn btn-danger btn-sm" href="{% url 'delete-room' pk=data.id %}">
+                                        <i class="fas fa-trash">
+                                        </i>
+                                        Delete
+                                    </a> 
+                                </td>
+
+                        {% elif obj_model == "payment"%}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ data.renter.full_name }}</td>
+                                <td >{{data.renter.room}}</td>
+                                <td>{{ data.no_of_months }}</td>        
+                                <td >{{data.amount}}</td>
+                                
+                                
+                                <td class="product-action"><a class="btn btn-primary btn-sm" href="{% url 'detail-payment' data.id  %}">
+                                    <i class="fas fa-folder"></i>
+                                    View</a>
+                                    <a class="btn btn-info btn-sm" href="{% url 'update-payment' data.id %}">
+                                        <i class="fas fa-pencil-alt">
+                                        </i>
+                                        Edit
+                                    </a>
+                                    <a class="btn btn-danger btn-sm" href="{% url 'home'  %}">
+                                        <i class="fas fa-trash">
+                                        </i>
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+
+
+                        {% endif %}
+                    {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="dataTables_empty text-center" valign="top">No records found</td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main_page %}
+
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "excel", "pdf", "print"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+{% if messages %}
+    {% for message in messages %}
+        <script>
+            $(function(){
+              var Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+                Toast.fire({
+                    icon:'success',
+                    title:"{{ message|safe }}"
+                })
+            })
+        </script>
+    {% endfor %}
+{% endif %}
+
+{% endblock scripts %}

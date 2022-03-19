@@ -1,0 +1,137 @@
+{% extends 'rent/homepage.html' %}
+
+{% load static %}
+
+
+{% block main_page %}
+<div class="content h-100%"
+    style="background-image: url('{% static 'images/bg.jpg' %}');background-repeat:no-repeat; background-size:cover;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ rooms.count }}</h3>
+
+                        <p>Rooms</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-building "></i>
+                    </div>
+                    <a href="{% url 'list-rooms' %}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6 w-inherit">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ renters.count }}</h3>
+
+                        <p>Renters</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="{% url 'list-renters' %}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ payments.count }}</h3>
+
+                        <p>Payments</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                    <a href="{% url 'list-payments' %}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{ rooms_rented_this_month }}</h3>
+
+                        <p>Rooms rented this month</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-building "></i>
+                    </div>
+                    <a href="{% url 'list-rooms' filter="occupied" %}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6 w-inherit">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        {% if amount_collected_this_month %}
+                        <h3>{{ amount_collected_this_month }} Birr</h3>
+                        {% else %}
+                        <h3> 0 Birr</h3>
+                        {% endif %}
+                        <p>Amount collected this month</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="{% url 'list-monthly-reports' %}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        {% if this_year_balance %}
+                        <h3>{{ this_year_balance }} Birr</h3>
+                        {% else %}
+                        <h3>0 Birr</h3>
+                        {% endif %}
+                        <p>This year balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                    <a href="{% url 'list-reports' %}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ over_due_payments }}</h3>
+
+                        <p>Over Due Payments</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-building "></i>
+                    </div>
+                    <a href="{% url 'list-rooms' %}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6 w-inherit">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ free_rooms }}</h3>
+
+                        <p>Vacant Rooms</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="{% url 'list-rooms' filter="vacant" %}" class="small-box-footer">More info <i
+                            class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main_page %}

@@ -1,0 +1,96 @@
+{% extends 'rent/homepage.html' %}
+{% load static %}
+
+{% block main_page %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="card">
+            
+            <div class="card-header bg-primary">
+                <h3 class="card-title ">List of {{ obj_model.capitalize }}</h3>
+            </div>
+            <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped ">
+                    <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Renter</th>
+                                <th>Room No</th>
+                                <th>Invoice</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            
+                        {% if object_list.count > 0 %}
+                            {% for data in object_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ data.paid_date }}</td>
+                                    <td>{{ data.renter }}</td>
+                                    <td>{{ data.renter.room }}</td>
+                                    <td>{{ data.invoice_no }}</td>
+                                    <td>{{ data.amount }}</td>
+                                </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="dataTables_empty text-center" valign="top">No records found</td>
+                            </tr>
+                            
+                            {% endif %}      
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" class="dataTables_empty text-center" valign="top">Total {{ total }} Birr</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock main_page %}
+        
+        
+        {% block scripts %}
+        {% load static %}
+        <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+        <script>
+          $(function () {
+            $("#example1").DataTable({
+              "responsive": true, "lengthChange": false, "autoWidth": false,
+              "buttons": ["copy", "excel", "pdf", "print"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+          });
+        </script>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    $(function(){
+                      var Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                        Toast.fire({
+                            icon:'{{ message.tags }}',
+                            title:"{{ message|safe }}"
+                        })
+                    })
+                </script>
+            {% endfor %}
+        {% endif %}
+        
+        {% endblock scripts %}

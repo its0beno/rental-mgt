@@ -1,0 +1,46 @@
+{% extends 'rent/homepage.html' %}
+
+{% load static %}
+
+
+{% block main_page %}
+<div class="content h-100%">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card w-100" >
+                <div class="card-header bg-danger">
+                    Reports
+                </div>
+                    <div class="card-body d-flex">
+                    <div class="col-lg-6 col-3 ">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h4 class="pb-5" >Monthly Payment Report</h4>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-building "></i>
+                            </div>
+                            <a href="{% url 'list-monthly-reports' %}" class="small-box-footer">More info <i
+                                    class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-3">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h4 class="pb-5">Rental Balances Report</h4>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-person-add"></i>
+                            </div>
+                            <a href="{% url 'list-reports' %}" class="small-box-footer">More info <i
+                                    class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main_page %}

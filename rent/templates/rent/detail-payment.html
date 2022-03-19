@@ -1,0 +1,82 @@
+{% extends 'rent/homepage.html' %}
+
+{% block main_page %}
+<div class="content">
+    <div class="container-fluid">            
+        <div class="card">
+            <div class="card-header bg-primary">
+                <h3 class="card-title">
+                    Payment For: {{object.renter}}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Room No
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                    {{object.renter.room}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Amount Paid
+                                </span>
+                                <span class="info-box-number text-center text-muted">
+                                    {{object.amount}} Birr.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <span class="info-box-text text-center text-muted">
+                                    Created By
+                                </span>
+                                <span class="info-box-number text-center text-muted">                                                                
+                                    <span class="text-success">{{object.created_by.full_name}}</span>                                
+                                </span>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <dl class="row">
+                    <dt class="col-sm-4">
+                        Room No.
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.renter.room}}
+                    </dd>
+                    <dt class="col-sm-4">
+                        No Of Months
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.no_of_months}} months
+                    </dd>
+                    <dt class="col-sm-4">
+                        Invoice No
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.invoice_no }}
+                    </dd>
+                    <dt class="col-sm-4">
+                        Slip No
+                    </dt>
+                    <dd class="col-sm-8">
+                        {{ object.slip_no }}
+                    </dd>
+                </dl>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock main_page %}

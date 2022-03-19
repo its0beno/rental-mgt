@@ -1,0 +1,97 @@
+{% extends 'rent/homepage.html' %}
+{% load static %}
+
+{% block main_page %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="card">
+            
+            <div class="card-header bg-primary">
+                <h3 class="card-title ">List of All {{ obj_model.capitalize }}</h3>
+            </div>
+            <div class="card-body">
+                <a class="btn btn-outline-primary float-right mb-3"
+                href="{% url 'register-roomtype' %}">Add New Room Type</a>
+                <table id="example1" class="table table-bordered table-striped ">
+                    <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Room Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% if object_list.count > 0 %}
+                            {% for data in object_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ data.room_type }}</td>
+                                    
+                                    <td class="product-action">
+                                        <a class="btn btn-info btn-sm" href="{% url 'update-roomtype' pk=data.id %}">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Edit
+                                        </a>
+                                        <a class="btn btn-danger btn-sm" href="{% url 'delete-roomtype' pk=data.id %}">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                                <tr>
+                                    <td colspan="6" class="dataTables_empty text-center" valign="top">No records found</td>
+                                </tr>
+                    
+                        {% endif %}      
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock main_page %}
+        
+        
+        {% block scripts %}
+        {% load static %}
+        <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+        <script>
+          $(function () {
+            $("#example1").DataTable({
+              "responsive": true, "lengthChange": false, "autoWidth": false,
+              "buttons": ["copy", "excel", "pdf", "print"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+          });
+        </script>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    $(function(){
+                      var Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                        Toast.fire({
+                            icon:'{{ message.tags }}',
+                            title:"{{ message|safe }}"
+                        })
+                    })
+                </script>
+            {% endfor %}
+        {% endif %}
+        
+        {% endblock scripts %}

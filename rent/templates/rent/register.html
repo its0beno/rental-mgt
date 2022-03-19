@@ -1,0 +1,44 @@
+{% extends 'rent/homepage.html' %}
+
+{% block main_page %}
+
+<div class="content">
+    <div class="container-fluid">
+    <div class="card">
+      <div class="card-header bg-primary">
+      {{card_header}}
+      </div>
+        
+        <div class="card-body">
+
+          {% if object %}
+            <h3>User: {{ object }}</h3>
+          {% endif %}
+
+          <form class="form" method="POST">
+            {% csrf_token %}
+          {% for field in form %}
+            {{field.id}}
+            <div class="form-group ml-auto mr-auto w-75">
+              {% for error in field.errors %}
+                <span class="text-danger">
+                <span class="fas fa-exclamation-triangle pr-2"></span>{{error}}<br>
+                </span>
+              {% endfor %}
+              {{field.label}}
+              {{field}}
+            </div>
+            {% endfor %}
+            <div class="card-footer">
+              <input type="Submit" class="btn btn-primary" value="Done">
+            </div>
+        </form>
+
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+{% endblock main_page %}
