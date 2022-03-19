@@ -40,10 +40,10 @@
                         <div class="info-box bg-light">
                             <div class="info-box-content">
                                 <span class="info-box-text text-center text-muted">
-                                    Admitted Date
+                                    Deposited Amount
                                 </span>
                                 <span class="info-box-number text-center text-muted">
-                                        <span class="">{{object.date_admitted}}</span>
+                                        <span class="">{{object.deposited_amount}}</span>
                                 </span>
                             </div>
                         </div>
@@ -57,16 +57,10 @@
                         {{ object.room.room_type}}
                     </dd>
                     <dt class="col-sm-4">
-                        Width
+                        Date Admitted
                     </dt>
                     <dd class="col-sm-8">
-                        {{ object.room.width }} m
-                    </dd>
-                    <dt class="col-sm-4">
-                        Length
-                    </dt>
-                    <dd class="col-sm-8">
-                        {{ object.room.length }} m
+                        {{ object.room.date_admitted }} m
                     </dd>
                     <dt class="col-sm-4">
                         Area
