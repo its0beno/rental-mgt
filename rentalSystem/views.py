@@ -3,15 +3,10 @@ from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.contrib.auth import logout as logout_
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from rent.models import UserAdditionalInfo
 from .forms import PasswordChangeForm
-#defining our home page 
-# def home(request):
-#     return redirect('')
-
 
 #redirectng the user to login page after logout
 def logout(request):
@@ -22,7 +17,7 @@ def forgot_password(request):
     try:
         value = request.session['username']
     except:
-        return render(request, 'rent/forgot-continue.html', {'error': f"No User found"})
+        return render(request, 'rent/forgot-password.html', {'errors': [f"No User found"]})
     try:
         user = User.objects.get(username = value)
     except:
@@ -36,7 +31,7 @@ def forgot_password(request):
                 request.session['security_answer'] = security_answer
                 return redirect('change-password')
             else:
-                return render(request, 'rent/forgot.html', {"security_question":security_question.security_question,'errors':["Incorrect Answer"]})
+                return render(request, 'rent/forgot-password2.html', {"security_question":security_question.security_question,'errors':["Incorrect Answer"]})
         else:
             messages.error(request, "The user doesn't have a security question.")
 
@@ -48,7 +43,7 @@ def forgot_password(request):
         if UserAdditionalInfo.objects.filter(user = user):
             security_question = UserAdditionalInfo.objects.get(user=user)
 
-            return render(request, 'rent/forgot.html', {"security_question":security_question.security_question})
+            return render(request, 'rent/forgot-password2.html', {"security_question":security_question.security_question})
         
         messages.error(request, "The user doesn't have a security quesion.")
 
@@ -71,14 +66,14 @@ def forgot(request):
         
         return redirect('forgot-password')
 
-    return render(request, 'rent/forgot-continue.html',context)
+    return render(request, 'rent/forgot-password.html',context)
 
 
 
 class PasswordChangeView(FormView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy('login')
-    template_name = 'rent/change_password.html'
+    template_name = 'rent/forgot-password3.html'
     title = _('Password change')
 
     def get_form_kwargs(self):
