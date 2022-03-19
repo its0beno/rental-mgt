@@ -51,7 +51,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <a href="home" class="brand-link">
         <img src=" {% static 'dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
           class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">Rental Managment System</span>
+        <span class="brand-text font-weight-light">Rental System</span>
       </a>
 
       <!-- Sidebar -->
@@ -85,7 +85,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                with font-awesome or any other icon font library -->
             <li class="nav-item">
               <a href="{% url 'home' %}" class="nav-link {% if open == "dashboard" %}active{% endif %}">
-                <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
                 <p>
                   Dashboard
                 </p>
@@ -95,7 +95,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             {% if room_permission %}
               <li class="nav-item">
                 <a href="{% url 'list-roomtypes' %}" class="nav-link {% if open == "roomtype" %}active{% endif %}">
-                  <i class="fa fa-credit-card" aria-hidden="true"></i>
+                  <i class="fa fa-building" aria-hidden="true"></i>
                   <p>
                     Room Types
                   </p>
@@ -136,21 +136,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </li>
             {% endif %}
 
-            {% if renter_permission %}
-              <li class="nav-item">
-                <a href="{% url 'home' %}" class="nav-link {% if open == "report leave" %}active{% endif %}">
-                  <i class="fa fa-credit-card" aria-hidden="true"></i>
-                  <p>
-                    Renters leaves room
-                  </p>
-                </a>
-              </li>
-            {% endif %}
-
             {% if report_permission %}
               <li class="nav-item">
                 <a href="{% url 'list-menu-reports' %}" class="nav-link {% if open == "report" %}active{% endif %}">
-                  <i class="fa fa-credit-card" aria-hidden="true"></i>
+                  <i class="fa fa-folder" aria-hidden="true"></i>
+
                   <p>
                     Reports
                   </p>
@@ -161,7 +151,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             {% if user_permission %}
               <li class="nav-item">
                 <a href="{% url 'list-users' %}" class="nav-link {% if open == "user" %}active{% endif %}">
-                  <i class="fa fa-credit-card" aria-hidden="true"></i>
+                  <i class="fa fa-users" aria-hidden="true"></i>
                   <p>
                     Users
                   </p>

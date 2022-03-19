@@ -35,7 +35,8 @@ def dashboard_page(request):
     this_year_balance = payments.filter(updated_date__year = timezone.now().year).aggregate(Sum('amount')).get("amount__sum")
     # Over Due Payments
     free_rooms = Room.objects.filter(status = "vacant").count()
- 
+    used_rooms = Room.objects.filter(status = "occupied").count()
+
     context = {
         "rooms": rooms,
         "renters": renters,
@@ -49,6 +50,7 @@ def dashboard_page(request):
         "tab_name": "Dashboard",
         "open": "dashboard",
         "card-header": "Dashboard",
+        "used_rooms" : used_rooms,
         **permissions(request)
     }
 
@@ -554,6 +556,7 @@ class UserAdditionalInfoUpdateView(UpdateView):
     model = UserAdditionalInfo
     template_name = "rent/register.html"
     form_class = UserAdditionalInfoForm
+    success_url = reverse_lazy('list-users')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
