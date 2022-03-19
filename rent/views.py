@@ -560,7 +560,7 @@ class UserAdditionalInfoUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["object"] = self.get_object(self).user
+        context["objects"] = self.get_object(self).user
         return context
 
     def get_object(self, queryset=None):

@@ -11,9 +11,9 @@
         
         <div class="card-body">
 
-          {% comment %} {% if object %}
+          {% if objects %}
             <h3>User: {{ object }}</h3>
-          {% endif %} {% endcomment %}
+          {% endif %} 
 
           <form class="form" method="POST">
             {% csrf_token %}
