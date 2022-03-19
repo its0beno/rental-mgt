@@ -44,7 +44,11 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="6" class="dataTables_empty text-center" valign="top">Total {{ total }} Birr</td>
+                                    {% if total != None %}
+                                        <td colspan="6" class="dataTables_empty text-center text-bold" valign="top">Total {{ total }} Birr</td>
+                                    {% else %}
+                                        <td colspan="6" class="dataTables_empty text-center text-bold" valign="top">No Payments this month</td>
+                                    {% endif %}
                                 </tr>
                             </tfoot>
                         </table>
