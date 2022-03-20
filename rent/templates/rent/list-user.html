@@ -14,7 +14,7 @@
                     Add New User
                 </a>
 
-                <table id="example1" class="table table-bordered table-striped ">
+                <table id="example1" class="table table-bordered table-striped" width="100%">
                     <thead>
                             <tr>
                                 <th>#</th>
@@ -58,20 +58,20 @@
                                             {% endif %}
                                          {% endif %}
                                     </td>
-                                    <td class="product-action"><a class="btn btn-primary btn-sm" href="{% url 'detail-payment' data.id  %}">
+                                    <td class="product-action d-flex"><a class="btn btn-primary btn-sm mr-3" href="{% url 'detail-payment' data.id  %}">
                                         <i class="fas fa-folder"></i>
                                         View</a>
-                                        <a class="btn btn-info btn-sm" href="{% url 'update-user' data.id %}">
+                                        <a class="btn btn-info btn-sm mr-3" href="{% url 'update-user' data.id %}">
                                             <i class="fas fa-pencil-alt">
                                             </i>
                                             Edit
                                         </a>
-                                        <a class="btn btn-info btn-sm" href="{% url 'update-info' data.id %}">
+                                        <a class="btn btn-info btn-sm mr-3" href="{% url 'update-info' data.id %}">
                                             <i class="fas fa-pencil-alt">
                                             </i>
                                             Edit Security Info
                                         </a>
-                                        <a class="btn btn-danger btn-sm" href="{% url 'home'  %}">
+                                        <a class="btn btn-danger btn-sm mr-3" href="{% url 'home'  %}">
                                             <i class="fas fa-trash">
                                             </i>
                                             Delete
@@ -108,7 +108,7 @@
         <script>
           $(function () {
             $("#example1").DataTable({
-              "responsive": true, "lengthChange": false, "autoWidth": false,
+                "scrollX":true,
               "buttons": ["copy", "excel", "pdf", "print"]
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
           });
