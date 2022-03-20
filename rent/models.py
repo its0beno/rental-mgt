@@ -110,13 +110,13 @@ class Renter(models.Model) :
 
 
     def save(self, *args, **kwargs):
+
         if self.room:
             if self.room.status == 'vacant':
                 self.room.status = 'occupied'
-            self.is_rented=True
+                self.is_rented=True
             self.room.save()
-        else:
-            self.is_rented=False
+
         return super().save()
 
     def __str__(self) -> str:

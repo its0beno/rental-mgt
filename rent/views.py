@@ -504,7 +504,7 @@ class ReportListView(LoginRequiredMixin, ReportViewPermissionMixin, ListView):
 
     def get_queryset(self):
         objects = Report.objects.all()
-        for object in objects:
+        for object in objects.filter(renter__is_rented = True):
             object.save()
         return super().get_queryset()
     

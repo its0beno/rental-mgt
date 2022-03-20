@@ -267,7 +267,6 @@ class UpdateRenterForm(forms.ModelForm):
             room = Room.objects.get(id=self.get_initial_for_field(self.fields['room'], 'room'))
         except Room.DoesNotExist:
             pass
-        new_room = self.cleaned_data['room']
         if room:
             if room.status == "occupied":
                 room.status = "vacant"
