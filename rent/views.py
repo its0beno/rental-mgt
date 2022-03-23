@@ -15,27 +15,39 @@ from .mixins import *
 
 def permissions(request):
     context ={
-        'room_permission': request.user.has_perm(perm="rent.view_room"),
+
+
         'renter_permission': request.user.has_perm(perm="rent.view_renter"),
         'renter_add_permission': request.user.has_perm(perm="rent.add_renter"),
         'renter_change_permission': request.user.has_perm(perm="rent.change_renter"),
         'renter_delete_permission': request.user.has_perm(perm="rent.delete_renter"),
-        'report_permission': request.user.has_perm(perm="rent.view_report"),
-        'payment_permission': request.user.has_perm(perm="rent.view_payment"),
-        'user_permission': request.user.has_perm(perm="auth.view_user"),  
+
+
         'roomtype_permission': request.user.has_perm(perm="auth.view_roomtype"),
         'roomtype_delete_permission': request.user.has_perm(perm="auth.delete_roomtype"),
         'roomtype_add_permission': request.user.has_perm(perm="auth.add_roomtype"),
         'roomtype_change_permission': request.user.has_perm(perm="auth.change_roomtype"),
+
+
+        'room_permission': request.user.has_perm(perm="rent.view_room"),
         'room_add_permission': request.user.has_perm(perm="rent.add_room"),
         'room_change_permission': request.user.has_perm(perm="rent.change_room"),
         'room_delete_permission': request.user.has_perm(perm="rent.delete_room"),
+
+
+        'user_permission': request.user.has_perm(perm="auth.view_user"),  
         'user_add_permission': request.user.has_perm(perm="auth.add_user"),
         'user_change_permission': request.user.has_perm(perm="auth.change_user"),
         'user_delete_permission': request.user.has_perm(perm="auth.delete_user"),
+
+
+        'payment_permission': request.user.has_perm(perm="rent.view_payment"),
         'payment_delete_permission': request.user.has_perm(perm="rent.delete_payment"),
         'payment_change_permission': request.user.has_perm(perm="rent.change_payment"),
         'payment_add_permission': request.user.has_perm(perm="rent.add_payment"),  
+
+        'report_permission': request.user.has_perm(perm="rent.view_report"),
+
     }
 
     return context
@@ -52,6 +64,16 @@ def dashboard_page(request):
     # Over Due Payments
     free_rooms = Room.objects.filter(status = "vacant").count()
     used_rooms = Room.objects.filter(status = "occupied").count()
+    # over_due_payments = Report.objects.filter(payable_month = 1).count()
+    reports = Report.objects.all()
+    over_due = []
+    for report in reports :
+        if report.payable_month >=  1 :
+            over_due.append(report.payable_month)  
+    over_due_payments = over_due.count()
+    
+   
+
 
     context = {
         "rooms": rooms,
@@ -60,7 +82,7 @@ def dashboard_page(request):
         "rooms_rented_this_month": rooms_rented_this_month,
         "amount_collected_this_month": amount_collected_this_month,
         "this_year_balance": this_year_balance,
-        # "over_due_payments": over_due_payments,
+        "over_due_payments": over_due_payments,
         "free_rooms": free_rooms,
         "title": "Dashboard",
         "tab_name": "Dashboard",
