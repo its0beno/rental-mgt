@@ -41,7 +41,7 @@ class Room(models.Model):
     floor_no = models.PositiveIntegerField(_("Floor No."))
     width = models.DecimalField(_("Room Width"), max_digits=5, decimal_places=2, blank=True, null=True)
     length = models.DecimalField(_("Room Length"), max_digits=5, decimal_places=2, blank=True, null= True)
-    area = models.DecimalField(_("Area"), max_digits=10, decimal_places=4)
+    area = models.DecimalField(_("Area"), max_digits=10, decimal_places=2)
     price_msq = models.DecimalField(_("Price per MSq"), max_digits=10, decimal_places=2)
     status = models.CharField(_("Status"), max_length=50, choices=STATUS_CHOICES, default="vacant")
     total_price = models.DecimalField(_("Total Price"), max_digits=10, decimal_places=2)
@@ -91,10 +91,9 @@ class Renter(models.Model) :
     room = models.ForeignKey("rent.Room", verbose_name=_("Room"), on_delete=models.CASCADE, related_name="rents")
     
     # Boolean that tells if the renter is renting.
-    is_rented = models.BooleanField(_("Is Rented"), default=False)
+    is_rented = models.BooleanField(_("Is Rented"), default=True)
+    date_left = models.DateField(_("Date Field"), blank=True, null=True)
 
-    # Boolean that tells if the renter is active.
-    is_active = models.BooleanField(_("Is Active"), default=True)
 
     # Fields that explains who and when the object  is created.
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Created By"), on_delete=models.PROTECT, related_name="created_by_renter")
@@ -111,11 +110,17 @@ class Renter(models.Model) :
 
     def save(self, *args, **kwargs):
 
-        if self.room:
+        if self.room and self.is_rented:
             if self.room.status == 'vacant':
                 self.room.status = 'occupied'
-                self.is_rented=True
-            self.room.save()
+        
+        else:
+            if self.room.status == "occupied":
+                self.room.status = "vacant"
+            
+            self.date_left = timezone.now()
+
+        self.room.save()
 
         return super().save()
 
@@ -192,12 +197,12 @@ class Report(models.Model):
 
 
     def total_paid_calculator(self) -> Decimal:
-        amount = self.payment_set.all().aggregate(Sum('amount'))
+        amount = self.payment_set.all().aggregate(Sum('amount')) 
 
         if amount.get('amount__sum') is None:
             return Decimal(0)
 
-        return amount.get('amount__sum')
+        return amount.get('amount__sum') + self.renter.deposited_amount
     
 
     @property

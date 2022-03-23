@@ -9,7 +9,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rent Managment System</title>
+  <title>Tenat Managment System</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet"
@@ -51,7 +51,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <a href="{% url 'home'%}" class="brand-link">
         <img src=" {% static 'dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
           class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">Rental System</span>
+        <span class="brand-text font-weight-light">Tenat Managment System</span>
       </a>
 
       <!-- Sidebar -->
@@ -103,7 +103,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </li>
             {% endif %}
 
-            {% if room_permission %}
+            {% if roomtype_permission %}
               <li class="nav-item">
                 <a href="{% url 'list-rooms' %}" class="nav-link {% if open == 'room' %}active{% endif %}">
                   <i class="fa fa-building" aria-hidden="true"></i>

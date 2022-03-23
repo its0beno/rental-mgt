@@ -7,7 +7,6 @@ from django.views.generic import CreateView, UpdateView, DeleteView, ListView, D
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 
-from rentalSystem.views import logout
 from .forms import *
 from .mixins import *
 
@@ -18,10 +17,25 @@ def permissions(request):
     context ={
         'room_permission': request.user.has_perm(perm="rent.view_room"),
         'renter_permission': request.user.has_perm(perm="rent.view_renter"),
+        'renter_add_permission': request.user.has_perm(perm="rent.add_renter"),
+        'renter_change_permission': request.user.has_perm(perm="rent.change_renter"),
+        'renter_delete_permission': request.user.has_perm(perm="rent.delete_renter"),
         'report_permission': request.user.has_perm(perm="rent.view_report"),
         'payment_permission': request.user.has_perm(perm="rent.view_payment"),
         'user_permission': request.user.has_perm(perm="auth.view_user"),  
         'roomtype_permission': request.user.has_perm(perm="auth.view_roomtype"),
+        'roomtype_delete_permission': request.user.has_perm(perm="auth.delete_roomtype"),
+        'roomtype_add_permission': request.user.has_perm(perm="auth.add_roomtype"),
+        'roomtype_change_permission': request.user.has_perm(perm="auth.change_roomtype"),
+        'room_add_permission': request.user.has_perm(perm="rent.add_room"),
+        'room_change_permission': request.user.has_perm(perm="rent.change_room"),
+        'room_delete_permission': request.user.has_perm(perm="rent.delete_room"),
+        'user_add_permission': request.user.has_perm(perm="auth.add_user"),
+        'user_change_permission': request.user.has_perm(perm="auth.change_user"),
+        'user_delete_permission': request.user.has_perm(perm="auth.delete_user"),
+        'payment_delete_permission': request.user.has_perm(perm="rent.delete_payment"),
+        'payment_change_permission': request.user.has_perm(perm="rent.change_payment"),
+        'payment_add_permission': request.user.has_perm(perm="rent.add_payment"),  
     }
 
     return context
@@ -109,6 +123,8 @@ class RoomListView(LoginRequiredMixin, RoomViewPermissionMixin, ListView):
             rooms = Room.objects.filter(is_active=True).filter(status= self.filter)
             
         return rooms
+
+    
     
 
 class RoomDetailView(LoginRequiredMixin, RoomViewPermissionMixin, DetailView):
@@ -188,7 +204,7 @@ class RenterListView(LoginRequiredMixin, RenterViewPermissionMixin, ListView):
         return {**context, **permissions(self.request)}
 
     def get_queryset(self):
-        return Renter.objects.filter(is_active=True)
+        return Renter.objects.filter(is_rented=True)
     
 
 
@@ -315,12 +331,12 @@ class PaymentDetailView(LoginRequiredMixin, PaymentViewPermissionMixin, DetailVi
 @permission_required(perm="rent.delete_renter")
 def RenterDeleteView(request, pk):
     object = Renter.objects.get(id= pk)
-    if request.method== "POST":
-        object.is_active=False
+    if request.method == "POST":
+        object.is_renter = False
         object.save()
 
         room = object.room
-        if room.status=="occupied":
+        if room.status == "occupied":
             room.status = "vacant"
             room.save()
 
@@ -617,7 +633,7 @@ def ChangeSecurity(request):
         "security_answer" : security.security_answer,
         "security_question" : security.security_question,
     }
-    return render(request, "rent/change-security.html", context)
+    return render(request, "authentication/change-security.html", context)
 
 
 def CheckPassword(request):
@@ -630,7 +646,7 @@ def CheckPassword(request):
             request.session["confirmed"] = True
             return redirect("change-security")
     
-    return render(request, "rent/check-password.html")
+    return render(request, "authentication/check-password.html")
 
 
 
@@ -687,4 +703,4 @@ def EditUserData(request):
         "email": user.email
     }
 
-    return render(request, "rent/change-user-info.html", context)
+    return render(request, "authentication/change-user-info.html", context)

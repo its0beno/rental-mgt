@@ -1,7 +1,4 @@
-from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import PermissionRequiredMixin
-
-
 
 
 class RoomCreatePermissionMixin(PermissionRequiredMixin):
@@ -16,6 +13,11 @@ class RoomDeletePermissionMixin(PermissionRequiredMixin):
     
 class RoomViewPermissionMixin(PermissionRequiredMixin):
     permission_required=["rent.view_room",]
+
+    def get_permission_denied_message(self) -> str:
+        message = "You are not allowed to view this page."
+
+        return message
 
 
 

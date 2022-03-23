@@ -10,15 +10,18 @@
                 <h3 class="card-title ">List of {{ obj_model.capitalize }}</h3>
             </div>
             <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped ">
+                <table id="example1" class="table table-bordered table-striped">
                     <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Date</th>
                                 <th>Renter</th>
                                 <th>Room No</th>
-                                <th>Invoice</th>
-                                <th>Amount</th>
+                                <th>Monthly Rate</th>
+                                <th>Payable Months</th>
+                                <th>Payable Amount</th>
+                                <th>Paid</th>
+                                <th>Outstanding Balance</th>
+                                <th>Last Payment date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -28,29 +31,28 @@
                             {% for data in object_list %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ data.paid_date }}</td>
                                     <td>{{ data.renter }}</td>
                                     <td>{{ data.renter.room }}</td>
-                                    <td>{{ data.invoice_no }}</td>
-                                    <td>{{ data.amount }}</td>
+                                    <td>{{ data.monthly_rate }}</td>
+                                    {% if data.renter.is_rented %}
+                                        <td>{{ data.payable_months_value }}</td>
+                                        <td>{{ data.payable_amount_value }}</td>
+                                    {% else %}
+                                        <td>{{ data.payable_month }}</td>
+                                        <td>{{ data.payable_amount }}</td>
+                                    {% endif %}
+                                    <td>{{ data.total_paid }}</td>
+                                    <td>{{ data.outstanding_balance }}</td>
+                                    <td>{{ data.last_paid_date }}</td>
                                 </tr>
                             {% endfor %}
-                            {% else %}
-                            <tr>
-                                <td colspan="6" class="dataTables_empty text-center" valign="top">No records found</td>
-                            </tr>
-                            
-                            {% endif %}      
-                            </tbody>
-                            <tfoot>
+                        {% else %}
                                 <tr>
-                                    {% if total != None %}
-                                        <td colspan="6" class="dataTables_empty text-center text-bold" valign="top">Total {{ total }} Birr</td>
-                                    {% else %}
-                                        <td colspan="6" class="dataTables_empty text-center text-bold" valign="top">No Payments this month</td>
-                                    {% endif %}
+                                    <td colspan="9" class="dataTables_empty text-center" valign="top">No records found</td>
                                 </tr>
-                            </tfoot>
+                    
+                        {% endif %}      
+                            </tbody>
                         </table>
                     </div>
                 </div>

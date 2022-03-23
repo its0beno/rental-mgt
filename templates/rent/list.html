@@ -10,14 +10,21 @@
                 <h3 class="card-title ">List of All {{ obj_model.capitalize }}</h3>
             </div>
             <div class="card-body">
-                <a class="btn btn-outline-primary float-right mb-3"
                 {% if obj_model == 'renter' %}
-                href="{% url 'register-renters' %}">Add New Renter</a>
+                    {% if renter_add_permission %}
+                        <a class="btn btn-outline-primary float-right mb-3"href="{% url 'register-renters' %}">
+                            Add New Renter</a>
+                    {% endif %}
                 {% elif obj_model == 'room' %}
-                href="{% url 'register-rooms' %}">Add New Room</a>
+                    {% if room_add_permission %}
+                        <a class="btn btn-outline-primary float-right mb-3" href="{% url 'register-rooms' %}">
+                        Add New Room</a>
+                    {% endif %}
                 {% elif obj_model == 'payment' %}
-                href="{% url 'register-payments' %}"> Add New Payment </a>
-
+                    {% if payment_add_permission %}
+                        <a class="btn btn-outline-primary float-right mb-3" href="{% url 'register-payments' %}"> 
+                            Add New Payment </a>
+                    {% endif %}
                 {% endif %}
                 <table id="example1" class="table table-bordered table-striped" width="100%">
                     <thead>
@@ -63,16 +70,20 @@
                                 <td class="product-action d-flex"><a class="btn btn-primary btn-sm mr-3" href="{% url 'detail-renter' pk=data.id %}">
                                     <i class="fas fa-folder"></i>
                                     View</a>
-                                    <a class="btn btn-info btn-sm mr-3" href="{% url 'update-renter' pk=data.id %}">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                        Edit
-                                    </a>
-                                    <a class="btn btn-danger btn-sm mr-3" href="{% url 'delete-renter' pk=data.id %}">
-                                        <i class="fas fa-trash">
-                                        </i>
-                                        Delete
-                                    </a>
+                                    {% if renter_change_permission %}
+                                        <a class="btn btn-info btn-sm mr-3" href="{% url 'update-renter' pk=data.id %}">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Edit
+                                        </a>
+                                    {% endif %}
+                                    {% if renter_delete_permission %}
+                                        <a class="btn btn-danger btn-sm mr-3" href="{% url 'delete-renter' pk=data.id %}">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            Delete
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% elif obj_model == "room" %}
@@ -95,16 +106,20 @@
                                 <td class="product-action d-flex"><a class="btn btn-primary btn-sm mr-3" href="{% url 'detail-room' data.id %}">
                                     <i class="fas fa-folder"></i>
                                     View</a>
-                                    <a class="btn btn-info btn-sm mr-3" href="{% url 'update-room' pk=data.id %}">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                        Edit
-                                    </a>
-                                    <a class="btn btn-danger btn-sm mr-3" href="{% url 'delete-room' pk=data.id %}">
-                                        <i class="fas fa-trash">
-                                        </i>
-                                        Delete
-                                    </a> 
+                                    {% if room_change_permission %}
+                                        <a class="btn btn-info btn-sm mr-3" href="{% url 'update-room' pk=data.id %}">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Edit
+                                        </a>
+                                    {% endif %}
+                                    {% if room_delete_permission %}
+                                        <a class="btn btn-danger btn-sm mr-3" href="{% url 'delete-room' pk=data.id %}">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            Delete
+                                        </a> 
+                                    {% endif %}
                                 </td>
 
                         {% elif obj_model == "payment"%}
@@ -119,16 +134,20 @@
                                 <td class="product-action d-flex"><a class="btn btn-primary btn-sm mr-3" href="{% url 'detail-payment' data.id  %}">
                                     <i class="fas fa-folder"></i>
                                     View</a>
-                                    <a class="btn btn-info btn-sm mr-3" href="{% url 'update-payment' data.id %}">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                        Edit
-                                    </a>
-                                    <a class="btn btn-danger btn-sm mr-3" href="{% url 'home'  %}">
+                                    {% if payment_change_permission %}
+                                        <a class="btn btn-info btn-sm mr-3" href="{% url 'update-payment' pk=data.id %}">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Edit
+                                        </a>
+                                    {% endif %}
+                                    {% if payment_delete_permission %}
+                                    <a class="btn btn-danger btn-sm mr-3" href="{% url 'payment-delete' pk=data.id  %}">
                                         <i class="fas fa-trash">
                                         </i>
                                         Delete
                                     </a>
+                                    {% endif %}
                                 </td>
                             </tr>
 
