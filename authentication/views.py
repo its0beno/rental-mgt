@@ -32,7 +32,7 @@ def forgot_password(request):
                 request.session['security_answer'] = security_answer
                 return redirect('change-password')
             else:
-                return render(request, 'authentication/forgot-password2.html', {"security_question":security_question.security_question,'errors':["Incorrect Answer"]})
+                return render(request, 'authentication/forgot-password2.html', {"security_question":security_question.security_question,'errors':["Incorrect Answer"],"title":"Forgot Password"})
         else:
             messages.error(request, "The user doesn't have a security question.")
 
@@ -44,7 +44,7 @@ def forgot_password(request):
         if UserAdditionalInfo.objects.filter(user = user):
             security_question = UserAdditionalInfo.objects.get(user=user)
 
-            return render(request, 'authentication/forgot-password2.html', {"security_question":security_question.security_question})
+            return render(request, 'authentication/forgot-password2.html', {"security_question":security_question.security_question,"title":"Forgot Password"})
         
         messages.error(request, "The user doesn't have a security quesion.")
 
@@ -55,7 +55,7 @@ def forgot_password(request):
     return redirect('forgot')
 
 def forgot(request):
-    context={}
+    context={"title":"Forgot Password"}
     if 'errors' in request.session.keys():
         context['errors']=request.session['errors']
 
@@ -91,6 +91,12 @@ class PasswordChangeView(FormView):
 
         kwargs['user'] = user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Forgot Password"
+        return context
+    
 
     def form_valid(self, form):
         form.save()
