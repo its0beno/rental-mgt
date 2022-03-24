@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from rent.models import UserAdditionalInfo
 from .forms import PasswordChangeForm
+from rent.views import permissions
 
 
 #redirectng the user to login page after logout
@@ -101,3 +102,35 @@ class PasswordChangeView(FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+
+
+def page_not_found_view(request, exception):
+    context={
+        'title': "404 Error Page",
+        **permissions(request)
+    }
+    return render(request, '404.html', context)
+
+
+def error_view(request):
+    context={
+        'title': "500 Error Page",
+        **permissions(request)
+    }
+    return render(request, "500.html", context)
+
+def permission_denied_view(request, exception):
+    context={
+        'title': "403 Error Page",
+        **permissions(request)
+    }
+    return render(request, "403.html", context)
+
+def bad_request_view(request, exception):
+    context={
+        'title': "400 Error Page",
+        **permissions(request)
+    }
+    print(exception)
+    return render(request, "400.html")
