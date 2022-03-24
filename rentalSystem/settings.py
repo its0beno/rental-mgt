@@ -31,7 +31,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if os.getenv("DEBUG") == "1":
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -145,6 +148,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static/"),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "../static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static_root")
 
 AUTH_USER = "auth.User"
