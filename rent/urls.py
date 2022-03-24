@@ -37,6 +37,7 @@ urlpatterns = [
     path("update-info/<int:pk>/", views.UserAdditionalInfoUpdateView.as_view(), name = "update-info"),
     path("user-detail/<int:pk>/", views.UserDetailView.as_view(), name = "user-detail"),
     path("payment-delete/<int:pk>/", views.PaymentDeleteView.as_view(), name = "payment-delete"),
+    path("over-due/", views.OverDuePaymentListView, name = "over-due"),
 
     
 ]

@@ -68,9 +68,10 @@ def dashboard_page(request):
     reports = Report.objects.all()
     over_due = []
     for report in reports :
-        if report.payable_month >=  1 :
-            over_due.append(report.payable_month)  
-    over_due_payments = over_due.count()
+        if report.outstanding_balance >=  0 :
+            over_due.append(report)  
+    
+    over_due_payment = len(over_due)
     
    
 
@@ -82,7 +83,7 @@ def dashboard_page(request):
         "rooms_rented_this_month": rooms_rented_this_month,
         "amount_collected_this_month": amount_collected_this_month,
         "this_year_balance": this_year_balance,
-        "over_due_payments": over_due_payments,
+        "over_due_payments": over_due_payment,
         "free_rooms": free_rooms,
         "title": "Dashboard",
         "tab_name": "Dashboard",
@@ -726,3 +727,23 @@ def EditUserData(request):
     }
 
     return render(request, "authentication/change-user-info.html", context)
+
+
+def OverDuePaymentListView(request):
+    reports = Report.objects.all()
+    over_due = []
+    for report in reports :
+        if report.outstanding_balance >=  0 :
+            over_due.append(report)  
+
+
+
+    context = {
+            "object_list": over_due,
+            "open":"overdue",
+            "title" :"Over Due Payments",
+            'obj_model': 'over due',
+            **permissions(request),
+        }
+    return render(request, "rent/over-due-list.html", context)
+
