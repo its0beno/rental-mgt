@@ -78,6 +78,7 @@ class RegisterRenterForm(forms.ModelForm):
             "last_name", 
             "phone",
             "room",
+            "chat_id",
             "deposited_amount", 
             "date_admitted"
         ]
