@@ -2,24 +2,20 @@
 {% load static %}
 
 {% block main_page %}
+{% comment %} <head> 
+    <!-- DataTable -->
+    <link rel="stylesheet" type="text/css" href="{% static  'DataTables/datatables.css'%}">
+</head> {% endcomment %}
 <div class="content">
     <div class="container-fluid">
         <div class="card">
-            
             <div class="card-header bg-primary">
                 <h3 class="card-title ">List of {{ obj_model.capitalize }}</h3>
             </div>
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped" width="100%">
                     <thead>
-    
                         <tr class="sorting sorting_desc">
-
-                            <th scope="col" class="action-checkbox-column">
-                               
-                                <div class="text"><span><input type="checkbox" id="action-toggle"></span></div>
-                                <div class="clear"></div>
-                            </th>
                             <th >#</th>
                             <th>Full Name</th>
                             <th>Room</th>
@@ -29,11 +25,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{object_list|length}}
                         {% if object_list|length > 0 %}
                             {% for data in object_list %}
                                 <tr>
-                                    <td class="action-checkbox"><input type="checkbox" name="_selected_action" value='{{data.id}}' class="action-select"></td>
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ data.renter }}</td>
                                     <td>{{ data.renter.room }}</td>
@@ -58,7 +52,7 @@
 </div>
 {% endblock main_page %}
         
-        
+
 {% load static %}
 {% block scripts %}
     <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
@@ -73,9 +67,27 @@
     <script>
         $(function () {
         $("#example1").DataTable({
+            select: true , 
+            select: {
+                style: 'multi'
+            },
+            dom: 'Blfrtip',
+            buttons: [
+                'selectAll',
+                'selectNone',
+                'copy',
+                'print',
+                'csv',
+            ],
+            language: {
+                buttons: {
+                    selectAll: "Select all items",
+                    selectNone: "Select none"
+                }
+            },
             "scrollX":true,
-            "buttons": ["copy", "excel", "pdf", "print"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            "buttons": ["copy", "print", "csv", "pdf"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-7:eq(0)');
         });
     </script>
     {% if messages %}
