@@ -78,7 +78,7 @@ def dashboard_page(request):
         "rooms_rented_this_month": rooms_rented_this_month,
         "amount_collected_this_month": amount_collected_this_month,
         "this_year_balance": this_year_balance,
-        "over_due_payments": over_due_payments,
+        
         "free_rooms": free_rooms,
         "title": "Dashboard",
         "tab_name": "Dashboard",
