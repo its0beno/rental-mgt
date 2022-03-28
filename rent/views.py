@@ -65,11 +65,7 @@ def dashboard_page(request):
     free_rooms = Room.objects.filter(status = "vacant").count()
     used_rooms = Room.objects.filter(status = "occupied").count()
     # over_due_payments = Report.objects.filter(payable_month = 1).count()
-    reports = Report.objects.all()
-    over_due = []
-    for report in reports :
-        if report.payable_month >=  1 :
-            over_due.append(report.payable_month)  
+      
    
     
    
