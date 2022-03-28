@@ -89,7 +89,7 @@ class Renter(models.Model) :
     deposited_amount = models.DecimalField(_("Deposited Amount"), max_digits=15, decimal_places=2, default=0)
     date_admitted = models.DateField(_("Date Admitted"), default=timezone.now)
     room = models.ForeignKey("rent.Room", verbose_name=_("Room"), on_delete=models.CASCADE, related_name="rents")
-    chat_id = models.CharField(_("Chat ID"), max_length=50 ,default= 0)
+    #chat_id = models.CharField(_("Chat ID"), max_length=50 ,default= 0)
 
 
     # Boolean that tells if the renter is renting.
