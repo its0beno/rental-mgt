@@ -70,7 +70,7 @@ def dashboard_page(request):
     for report in reports :
         if report.payable_month >=  1 :
             over_due.append(report.payable_month)  
-    over_due_payments = over_due.count()
+   
     
    
 
