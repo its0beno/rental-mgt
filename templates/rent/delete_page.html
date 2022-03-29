@@ -98,6 +98,21 @@
                 {{ object.invoice_no }}
             </dd>
         </dl>
+        {% elif obj_model == "building" %}
+                <dt class="col-sm-2">
+                    Building Name
+                </dt>
+                <dd class="col-sm-10">
+                    {{ object.name}}
+                </dd>
+                <dt class="col-sm-2">
+                    Building Address
+                </dt>
+                <dd class="col-sm-10">
+                    {{ object.address}}
+                </dd>
+            </dl>
+
             {% endif %}
                 </div>
                 <div class="card-footer">

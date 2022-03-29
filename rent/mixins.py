@@ -105,3 +105,18 @@ class UserDeletePermissionMixin(PermissionRequiredMixin):
     
 class UserViewPermissionMixin(PermissionRequiredMixin):
     permission_required=["auth.view_user",]
+    
+    
+    
+class BuildingCreatePermissionMixin(PermissionRequiredMixin):
+    permission_required=["auth.add_building",]
+
+class BuildingUpdatePermissionMixin(PermissionRequiredMixin):
+    permission_required=["auth.change_building",]
+
+
+class BuildingDeletePermissionMixin(PermissionRequiredMixin):
+    permission_required=["auth.delete_building",]
+    
+class BuildingViewPermissionMixin(PermissionRequiredMixin):
+    permission_required=["auth.view_building",]

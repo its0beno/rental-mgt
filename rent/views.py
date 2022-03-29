@@ -15,7 +15,13 @@ from .mixins import *
 
 def permissions(request):
     context ={
+        
 
+        'building_permission': request.user.has_perm(perm="rent.view_building"),
+        'building_add_permission': request.user.has_perm(perm="rent.add_building"),
+        'building_change_permission': request.user.has_perm(perm="rent.change_building"),
+        'building_delete_permission': request.user.has_perm(perm="rent.delete_building"),
+        
 
         'renter_permission': request.user.has_perm(perm="rent.view_renter"),
         'renter_add_permission': request.user.has_perm(perm="rent.add_renter"),
@@ -23,10 +29,10 @@ def permissions(request):
         'renter_delete_permission': request.user.has_perm(perm="rent.delete_renter"),
 
 
-        'roomtype_permission': request.user.has_perm(perm="auth.view_roomtype"),
-        'roomtype_delete_permission': request.user.has_perm(perm="auth.delete_roomtype"),
-        'roomtype_add_permission': request.user.has_perm(perm="auth.add_roomtype"),
-        'roomtype_change_permission': request.user.has_perm(perm="auth.change_roomtype"),
+        'roomtype_permission': request.user.has_perm(perm="rent.view_roomtype"),
+        'roomtype_delete_permission': request.user.has_perm(perm="rent.delete_roomtype"),
+        'roomtype_add_permission': request.user.has_perm(perm="rent.add_roomtype"),
+        'roomtype_change_permission': request.user.has_perm(perm="rent.change_roomtype"),
 
 
         'room_permission': request.user.has_perm(perm="rent.view_room"),
@@ -501,7 +507,8 @@ class RoomTypeDeleteView(LoginRequiredMixin, RoomTypeDeletePermissionMixin, Dele
 class PaymentDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, DeleteView):
     model = Payment
     template_name = "rent/delete_page.html"
-    
+    success_url = reverse_lazy('list-payments')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Payment"
@@ -730,6 +737,8 @@ def EditUserData(request):
 
 
 def OverDuePaymentListView(request):
+    if request.method == 'POST':
+        print(request.POST)
     reports = Report.objects.all()
     over_due = []
     for report in reports :
@@ -747,3 +756,88 @@ def OverDuePaymentListView(request):
         }
     return render(request, "rent/over-due-list.html", context)
 
+
+class BuildingListView(LoginRequiredMixin, BuildingViewPermissionMixin, ListView):
+    model = Building
+    template_name = "rent/building-list.html"
+
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Building"
+        context["open"] = "building"
+        context['obj_model'] = "building"
+        
+        
+        return {**context, **permissions(self.request)}
+
+
+
+class BuildingCreateView(LoginRequiredMixin, BuildingCreatePermissionMixin, CreateView):
+    form_class = RegisterBuildingForm
+    success_url = reverse_lazy('list-buildings')
+    context_object_name = 'form'
+    template_name = 'rent/register.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tab_name"] = "Bulding"
+        context["title"] = "Building"
+        context["card_header"] = "Register Building"
+        context["open"] = "building"
+
+        return {**context, **permissions(self.request)}
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Building Registered Successfully')
+        return super().form_valid(form)
+
+
+class BuildingUpdateView(LoginRequiredMixin, BuildingUpdatePermissionMixin, UpdateView):
+    login_required = True
+    model = Building
+    form_class = RegisterBuildingForm
+    context_object_name = "form"
+    success_url = reverse_lazy("list-buildings")
+    template_name = "rent/register.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Building"
+        context["card_header"] = "Building"
+        context["open"] = "building"
+
+        return {**context, **permissions(self.request)}
+
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Room Updated Successfully')
+        return super().form_valid(form)
+
+
+class BuildingDeleteView(LoginRequiredMixin, BuildingDeletePermissionMixin, DeleteView):
+    model = Building
+    success_url = reverse_lazy('list-buildings')
+    template_name = "rent/delete_page.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Building"
+        context["open"] = "building"
+        context['obj_model'] = "building" 
+        
+        
+        return {**context, **permissions(self.request)}
+
+
+    def delete(self, *args, **kwargs):
+        print('wow')
+        if not self.get_object().room_set.all():
+            super().delete(self, *args, **kwargs)
+            messages.success(self.request, "building Deleted successfully")
+            print('am in')
+        else:
+            messages.error(self.request, "Building Cant Be Deleted. Make sure there are no rooms under this Room Type ")
+            
+        return HttpResponseRedirect(self.success_url)

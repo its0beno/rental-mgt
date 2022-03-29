@@ -38,6 +38,9 @@ urlpatterns = [
     path("user-detail/<int:pk>/", views.UserDetailView.as_view(), name = "user-detail"),
     path("payment-delete/<int:pk>/", views.PaymentDeleteView.as_view(), name = "payment-delete"),
     path("over-due/", views.OverDuePaymentListView, name = "over-due"),
-
-    
+    path("list-building/", views.BuildingListView.as_view(), name = "list-buildings"),
+    path("register-building/", views.BuildingCreateView.as_view(), name = "register-building"),
+    path("update-building/<int:pk>/", views.BuildingUpdateView.as_view(), name = "update-building"),
+    path("delete-building/<int:pk>/", views.BuildingDeleteView.as_view(), name = "delete-building"),
+   
 ]

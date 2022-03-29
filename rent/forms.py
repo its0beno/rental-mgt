@@ -24,15 +24,6 @@ MONTHS_CHOICES = [
 class RegisterRoomForm(forms.ModelForm):
     def __init__(self, *args, **kwargs) -> None:
         super(RegisterRoomForm, self).__init__(*args, **kwargs)
-        
-        # self.fields.pop('area')
-        # self.fields.pop('created_by')
-        # self.fields.pop('updated_by')
-        # self.fields.pop('total_price')
-        # self.fields.pop('is_active')
-
-        
-
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
@@ -273,3 +264,19 @@ class UpdateRenterForm(forms.ModelForm):
                 room.status = "vacant"
                 room.save()
         return super().save()
+
+
+class RegisterBuildingForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterBuildingForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class']= 'form-control'
+
+    class Meta :
+        model = Building
+        fields = [
+            "name", 
+            "address",
+        ]
+

@@ -2,10 +2,7 @@
 {% load static %}
 
 {% block main_page %}
-{% comment %} <head> 
-    <!-- DataTable -->
-    <link rel="stylesheet" type="text/css" href="{% static  'DataTables/datatables.css'%}">
-</head> {% endcomment %}
+
 <div class="content">
     <div class="container-fluid">
         <div class="card">
@@ -13,39 +10,47 @@
                 <h3 class="card-title ">List of {{ obj_model.capitalize }}</h3>
             </div>
             <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped" width="100%">
-                    <thead>
-                        <tr class="sorting sorting_desc">
-                            <th >#</th>
-                            <th>Full Name</th>
-                            <th>Room</th>
-                            <th>Chat Id</th>
-                            <th>payable Months</th>
-                            <th>Outstanding Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if object_list|length > 0 %}
-                            {% for data in object_list %}
-                                <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{ data.renter }}</td>
-                                    <td>{{ data.renter.room }}</td>
-                                    <td>{{ data.renter.chat_id }}</td>
-                                    <td>{{ data.payable_month}}</td>
-                                    <td>{{ data.outstanding_balance  }}</td>
-                                </tr>
-                            {% endfor %}
-                            
-                        {% else %}
-                            <tr>
-                                <td colspan="7" class="dataTables_empty text-center" valign="top">No records found</td>
+                <form method='POST'>
+                    {% csrf_token %}
+                    <table id="example1" class="table table-bordered table-striped" width="100%">
+                        <thead>
+                            <tr class="sorting sorting_desc">
+                                <th ><input type='checkbox' id="table_selector"></th>
+                                <th >#</th>
+                                <th>Full Name</th>
+                                <th>Room</th>
+                                <th>Chat Id</th>
+                                <th>payable Months</th>
+                                <th>Outstanding Balance</th>
                             </tr>
-                        {% endif %}
-                            
-                            
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% if object_list|length > 0 %}
+                                {% for data in object_list %}
+                                    <tr>
+                                        <td><input type='checkbox' id="row{{ forloop.counter }}" name="selected_id" value = '{{data.id}}'></td>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ data.renter }}</td>
+                                        <td>{{ data.renter.room }}</td>
+                                        <td>{{ data.renter.chat_id }}</td>
+                                        <td>{{ data.payable_month}}</td>
+                                        <td>{{ data.outstanding_balance  }}</td>
+                                    </tr>
+                                {% endfor %}
+                                
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="dataTables_empty text-center" valign="top">No records found</td>
+                                </tr>
+                            {% endif %}
+                                
+                                
+                        </tbody>
+                    </table>
+                    <div class="card-footer">
+                        <input type="Submit" class="btn btn-primary float-right" value="Done">
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -66,29 +71,53 @@
     <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
     <script>
         $(function () {
-        $("#example1").DataTable({
-            select: true , 
-            select: {
-                style: 'multi'
-            },
-            dom: 'Blfrtip',
-            buttons: [
-                'selectAll',
-                'selectNone',
-                'copy',
-                'print',
-                'csv',
-            ],
-            language: {
-                buttons: {
-                    selectAll: "Select all items",
-                    selectNone: "Select none"
+            const table = $("#example1").DataTable({
+              "scrollX":true,
+              "buttons": ["copy", "excel", "pdf", "print"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+            const tableSelector = $("#table_selector");
+
+            const rowLength = parseInt('{{object_list|length}}')
+
+            for (let row = 1; row <= rowLength; row++) {
+                const element = $(`#row${[row]}`);
+                element.on("click", ()=>{
+                    var counter = 0;
+                    for (let row2 = 1; row2 <= rowLength; row2++) {
+                        if ($(`#row${row2}`).prop("checked")){
+                            counter++
+                        }
+                    }
+                    if (counter == rowLength){
+                        tableSelector.prop("checked", true)
+                    }
+                    else{
+                        tableSelector.prop("checked", false)
+                    }
+                })
+                
+            }
+
+            tableSelector.on("click", (e)=>{
+                if (tableSelector.prop("checked")){
+                    for (let row = 1; row <= rowLength; row++) {
+                        const element = $(`#row${[row]}`);
+                        element.prop("checked", true)
+                        
+                    }
                 }
-            },
-            "scrollX":true,
-            "buttons": ["copy", "print", "csv", "pdf"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-7:eq(0)');
-        });
+                else{
+                    for (let row = 1; row <= rowLength; row++) {
+                        const element = $(`#row${[row]}`);
+                        element.prop("checked", false)
+                        
+                    }
+                }
+            })
+
+
+          });
     </script>
     {% if messages %}
         {% for message in messages %}
