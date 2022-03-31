@@ -13,4 +13,4 @@ def overdue_message_formatter(info):
 
 def send_message (chat_id, message):
     url_req = "https://api.telegram.org/bot" + API + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + message + "&parse_mode=HTML" 
-    requests.get(url_req)    
+    requests.get(url_req)
