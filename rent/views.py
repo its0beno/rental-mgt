@@ -236,6 +236,7 @@ class RenterListView(LoginRequiredMixin, RenterViewPermissionMixin, ListView):
         context["open"] = "renter"
         context['obj_model'] = "renter"
 
+
         return {**context, **permissions(self.request)}
 
     def get_queryset(self):
@@ -367,7 +368,7 @@ class PaymentDetailView(LoginRequiredMixin, PaymentViewPermissionMixin, DetailVi
 def RenterDeleteView(request, pk):
     object = Renter.objects.get(id= pk)
     if request.method == "POST":
-        object.is_renter = False
+        object.is_rented = False
         object.save()
 
         room = object.room
@@ -395,14 +396,12 @@ def RenterDeleteView(request, pk):
 def RoomDeleteView(request, pk):
     object = Room.objects.get(id= pk)
     if request.method== "POST":
-        renter = object.rents.filter(is_rented=True)[0]
-        renter.is_rented= False
-        object.is_active=False
-        object.save()
-        renter.save()
-
-        messages.success(request, message="Room Deleted Sucessfully")
-        
+        if object.status == "occupied":
+            messages.error(request, message="Room Can't be Deleted, you need to delete the rented attached to it")
+        else:
+            object.is_active=False
+            object.save()
+            messages.success(request, message="Room Deleted Sucessfully")
         return redirect("list-rooms")
 
     context={
@@ -550,7 +549,7 @@ class ReportListView(LoginRequiredMixin, ReportViewPermissionMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Report"
+        context["title"] = " Renatl Balance Report"
         context["open"] = "report"
         context['obj_model'] = "report"
 

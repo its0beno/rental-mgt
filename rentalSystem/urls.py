@@ -15,3 +15,5 @@ handler404 = 'authentication.views.page_not_found_view'
 handler500 = 'authentication.views.error_view'
 handler403 = 'authentication.views.permission_denied_view'
 handler400 = 'authentication.views.bad_request_view'
+
+admin.site.site_header = "Tenant Adminstration Panel"

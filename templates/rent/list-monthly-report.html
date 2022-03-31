@@ -17,6 +17,7 @@
                             <th>Date</th>
                             <th>Renter</th>
                             <th>Room No</th>
+                            <th>Building</th>
                             <th>Invoice</th>
                             <th>Amount</th>
                         </tr>
@@ -29,6 +30,7 @@
                                     <td>{{ data.paid_date }}</td>
                                     <td>{{ data.renter }}</td>
                                     <td>{{ data.renter.room }}</td>
+                                    <td>{{ data.renter.room.building.name }}</td>
                                     <td>{{ data.invoice_no }}</td>
                                     <td>{{ data.amount }}</td>
                                 </tr>

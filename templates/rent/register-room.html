@@ -16,14 +16,13 @@
                 {% csrf_token %}            
                 {{form.errors}}
                 <div class="form-group w-75 ml-auto mr-auto">
-                    Room No.
-                    {{ form.room_no }}
-                </div>
-
-
-                <div class="form-group w-75 ml-auto mr-auto">
                     Building
                     {{ form.building }}
+                </div>
+                
+                <div class="form-group w-75 ml-auto mr-auto">
+                    Floor No.
+                    {{ form.floor_no}}
                 </div>
 
 
@@ -31,11 +30,12 @@
                     Room Type
                     {{ form.room_type }}
                 </div>
-
-
+                
+                                             
+                
                 <div class="form-group w-75 ml-auto mr-auto">
-                    Floor No.
-                    {{ form.floor_no}}
+                    Room No.
+                    {{ form.room_no }}
                 </div>
 
                 <div class="d-flex flex-row w-75 ml-auto mr-auto">
@@ -66,7 +66,7 @@
                 <div class="card-footer w-75 mr-auto ml-auto">
                     <input type="submit" class="btn btn-primary float-right" value="Done">
                 </form>
-                <button class="btn btn-danger float-left" onclick="javascript:history.go(-1);">Cancel</button>
+                <button class="btn btn-danger float-right" onclick="javascript:history.go(-1);">Cancel</button>
             </div>
         </div>
             

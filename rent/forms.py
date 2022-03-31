@@ -32,10 +32,10 @@ class RegisterRoomForm(forms.ModelForm):
     class Meta :
         model = Room
         fields = [
-            "room_no", 
             "building",
-            "room_type",
             "floor_no",
+            "room_type",
+            "room_no", 
             "width",
             "length",
             "price_msq",
@@ -235,6 +235,7 @@ class UpdateRenterForm(forms.ModelForm):
             "room",
             "chat_id",
             "deposited_amount",
+            "date_admitted",
             "is_rented"
         ]
 

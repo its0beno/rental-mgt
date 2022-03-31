@@ -35,10 +35,10 @@ class Building(models.Model):
 
 
 class Room(models.Model):
-    room_no = models.CharField(_("Room No."),max_length=10, unique=True)
     building = models.ForeignKey("rent.Building", verbose_name=_("Building"), on_delete=models.PROTECT)
-    room_type = models.ForeignKey("rent.RoomType", verbose_name=_("Room Type"), on_delete=models.PROTECT)
     floor_no = models.PositiveIntegerField(_("Floor No."))
+    room_type = models.ForeignKey("rent.RoomType", verbose_name=_("Room Type"), on_delete=models.PROTECT)
+    room_no = models.CharField(_("Room No."),max_length=10, unique=True)
     width = models.DecimalField(_("Room Width"), max_digits=5, decimal_places=2, blank=True, null=True)
     length = models.DecimalField(_("Room Length"), max_digits=5, decimal_places=2, blank=True, null= True)
     area = models.DecimalField(_("Area"), max_digits=10, decimal_places=2)
@@ -88,7 +88,7 @@ class Renter(models.Model) :
     id_no = models.CharField(_("ID No."), max_length=50)
     deposited_amount = models.DecimalField(_("Deposited Amount"), max_digits=15, decimal_places=2, default=0)
     date_admitted = models.DateField(_("Date Admitted"), default=timezone.now)
-    room = models.ForeignKey("rent.Room", verbose_name=_("Room"), on_delete=models.CASCADE, related_name="rents")
+    room = models.ForeignKey("rent.Room", verbose_name=_("Room"), on_delete=models.PROTECT, related_name="rents")
     chat_id = models.CharField(_("Chat ID"), max_length=50 ,default= 0)
 
 
@@ -107,7 +107,7 @@ class Renter(models.Model) :
 
 
     def full_name(self) -> str:
-        return self.first_name + self.last_name
+        return self.first_name + ' ' + self.last_name
 
 
     def save(self, *args, **kwargs):
