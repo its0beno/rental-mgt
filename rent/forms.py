@@ -233,6 +233,7 @@ class UpdateRenterForm(forms.ModelForm):
             "last_name", 
             "phone",
             "room",
+            "chat_id",
             "deposited_amount",
             "is_rented"
         ]

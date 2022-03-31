@@ -1,3 +1,4 @@
+from bot.message_sender import overdue_message_formatter
 from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -119,13 +120,18 @@ class RoomCreateView(LoginRequiredMixin, RoomCreatePermissionMixin, CreateView):
         return {**context, **permissions(self.request)}
 
     def form_valid(self, form):
+        print("done")
         messages.success(self.request, 'Room Registered Successfully')
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
-        form.instance.status = "vacant"
 
 
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print("eeee")
+        print(form.errors)
+        return super().form_invalid(form)
 
 
 class RoomListView(LoginRequiredMixin, RoomViewPermissionMixin, ListView):
@@ -494,15 +500,18 @@ class RoomTypeDeleteView(LoginRequiredMixin, RoomTypeDeletePermissionMixin, Dele
         
         return {**context, **permissions(self.request)}
 
-    def delete(self, *args, **kwargs):
-        if not self.get_object().room_set.all():
-            super().delete(self, *args, **kwargs)
+    def form_valid(self, form):
+        for i in range(1000):
+            print("wow")
+        if self.get_object().room_set.all().count() == 0 :
+            super().form_valid(self)
             messages.success(self.request, "Room Type Deleted successfully")
 
         else:
             messages.error(self.request, "Room Type Cant Be Deleted. Make sure there are no rooms under this Room Type ")
             
         return HttpResponseRedirect(self.success_url)
+        
     
 class PaymentDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, DeleteView):
     model = Payment
@@ -738,7 +747,22 @@ def EditUserData(request):
 
 def OverDuePaymentListView(request):
     if request.method == 'POST':
-        print(request.POST)
+        if "selected_id" in request.POST:
+            due = []
+            if request.POST["selected_id"]:
+                for selected in request.POST.getlist("selected_id"):
+                    var = []
+                    var.append(Report.objects.get(id = selected).renter.full_name())
+                    var.append(Report.objects.get(id = selected).renter.chat_id)
+                    var.append(float(Report.objects.get(id = selected).outstanding_balance))
+                    due.append(var)
+
+            for info in due:
+                overdue_message_formatter(info)
+
+            messages.success(request, "Sent messages successfully.")
+        else:
+            messages.error(request, "You have to select at least one.")
     reports = Report.objects.all()
     over_due = []
     for report in reports :
@@ -831,13 +855,13 @@ class BuildingDeleteView(LoginRequiredMixin, BuildingDeletePermissionMixin, Dele
         return {**context, **permissions(self.request)}
 
 
-    def delete(self, *args, **kwargs):
-        print('wow')
-        if not self.get_object().room_set.all():
-            super().delete(self, *args, **kwargs)
-            messages.success(self.request, "building Deleted successfully")
-            print('am in')
+    def form_valid(self, form):
+        if self.get_object().room_set.all().count() == 0 :
+            super().form_valid(self)
+            messages.success(self.request, "Building Deleted successfully")
+
         else:
-            messages.error(self.request, "Building Cant Be Deleted. Make sure there are no rooms under this Room Type ")
+            messages.error(self.request, "Building Cant Be Deleted. Make sure there are no rooms under this Building ")
             
         return HttpResponseRedirect(self.success_url)
+        

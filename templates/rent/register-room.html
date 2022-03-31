@@ -14,7 +14,7 @@
 
           <form class="form" method="POST">
                 {% csrf_token %}            
-                        
+                {{form.errors}}
                 <div class="form-group w-75 ml-auto mr-auto">
                     Room No.
                     {{ form.room_no }}
@@ -64,11 +64,10 @@
                     
                 </div>
                 <div class="card-footer w-75 mr-auto ml-auto">
-                    <button class="btn btn-danger float-left" onclick="javascript:history.go(-1);">Cancel</button>
-                    <input type="Submit" class="btn btn-primary float-right" value="Done">
-                </div>
-            </form>
-
+                    <input type="submit" class="btn btn-primary float-right" value="Done">
+                </form>
+                <button class="btn btn-danger float-left" onclick="javascript:history.go(-1);">Cancel</button>
+            </div>
         </div>
             
     </div>

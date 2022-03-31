@@ -1,0 +1,1 @@
+OVERDUE_MESSAGE = "Welcome {renter}, you have an outstanding balance of <b>{balance} Birr</b>. Please talk to us as soon us possible."

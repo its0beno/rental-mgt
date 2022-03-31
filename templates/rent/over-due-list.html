@@ -96,6 +96,27 @@
                         tableSelector.prop("checked", false)
                     }
                 })
+                element.parent().parent().on("click", ()=>{
+                    if (element.prop("checked")){
+                        element.prop("checked", false)
+                    }
+                    else{
+                        element.prop("checked", true)
+                    }
+
+                    var counter = 0;
+                    for (let row2 = 1; row2 <= rowLength; row2++) {
+                        if ($(`#row${row2}`).prop("checked")){
+                            counter++
+                        }
+                    }
+                    if (counter == rowLength){
+                        tableSelector.prop("checked", true)
+                    }
+                    else{
+                        tableSelector.prop("checked", false)
+                    }
+                })
                 
             }
 

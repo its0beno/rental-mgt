@@ -192,7 +192,7 @@ class UserAdditionalInfo(models.Model):
 
 
 class Report(models.Model):
-    renter = models.ForeignKey("rent.Renter", verbose_name=_("invoice_no"), on_delete=models.CASCADE)
+    renter = models.ForeignKey("rent.Renter", verbose_name=_("Invoice No."), on_delete=models.CASCADE)
     payable_month = models.DecimalField(_("Payable Month"), max_digits=20, decimal_places=2, default=0)
     payable_amount = models.DecimalField(_("Payable Amount"), max_digits=10, decimal_places=2, default=0)
     total_paid = models.DecimalField(_("Total Paid"), max_digits=10, decimal_places=2, default=0, editable=False)
@@ -236,7 +236,11 @@ class Report(models.Model):
     @property
     def last_paid_date(self):
         queryset = self.payment_set.all().order_by("-created_date")
-        return queryset[0].paid_date
+        if queryset :
+            return queryset[0].paid_date
+        else:
+            return "Hasn't Paid Yet"
+
 
     def save(self):
         self.payable_month = self.payable_months_value
