@@ -40,5 +40,34 @@
   </div>
 </div>
 
-
 {% endblock main_page %}
+
+
+
+{% block scripts %}
+<script>
+    $(function(){
+        const renterField = $("#id_renter");
+        const monthField = $("#id_no_of_months");
+        const amountField = $("#id_amount");
+        let price;
+        renterField.on("change",()=>{
+            const value = renterField.val();
+            if (parseInt(value)>0){
+                fetch('{% url "room-price" %}' + `${value}/`).then((response)=>{response.json().then((data)=>{price = data.price; monthField.trigger("keyup")})})
+                
+            }
+        })
+
+        monthField.on("keyup", ()=>{
+            amountField.val(price * parseInt(monthField.val()));
+        })
+
+        console.log(monthField)
+        
+
+        
+    });
+</script>
+{% endblock scripts %}
+    

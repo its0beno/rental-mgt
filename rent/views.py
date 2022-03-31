@@ -3,7 +3,7 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
@@ -62,8 +62,8 @@ def permissions(request):
 
 @login_required
 def dashboard_page(request):
-    rooms = Room.objects.all()
-    renters = Renter.objects.all()
+    rooms = Room.objects.filter(is_active=True)
+    renters = Renter.objects.filter(is_rented=True)
     payments = Payment.objects.all()
     rooms_rented_this_month = renters.filter(is_rented=True).filter(updated_date__year = timezone.now().year, updated_date__month = timezone.now().month).count()
     amount_collected_this_month = payments.filter(paid_date__year = timezone.now().year, paid_date__month = timezone.now().month).aggregate(Sum('amount')).get("amount__sum")
@@ -289,7 +289,7 @@ class PaymentCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, Create
     form_class = RegisterPaymentForm
     success_url = reverse_lazy('list-payments')
     context_object_name = 'form'
-    template_name = 'rent/register.html'
+    template_name = 'rent/register_payment.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -863,3 +863,13 @@ class BuildingDeleteView(LoginRequiredMixin, BuildingDeletePermissionMixin, Dele
             
         return HttpResponseRedirect(self.success_url)
         
+
+
+@login_required
+@permission_required(perm = "rent.view_report")
+def RoomPrice(request, pk):
+    renter = Renter.objects.get(id = pk)
+
+    room_price = renter.room.total_price
+
+    return JsonResponse({"price":room_price})

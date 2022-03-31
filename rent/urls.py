@@ -21,6 +21,8 @@ urlpatterns = [
     path("edit-renter/<int:pk>/", views.RenterUpdateView.as_view(), name= "update-renter"),
     path("delete-renter/<int:pk>/", views.RenterDeleteView, name="delete-renter"),
     path("register-payment/", views.PaymentCreateView.as_view(), name= "register-payments"),
+    path("room-price/", views.RoomPrice, name = "room-price"),
+    path("room-price/<int:pk>/", views.RoomPrice),
     path("list-payment/", views.PaymentListView.as_view(), name= "list-payments"),
     path("detial-payment/<int:pk>/", views.PaymentDetailView.as_view(), name= "detail-payment"),
     path("edit-payment/<int:pk>/", views.PaymentUpdateView.as_view(), name= "update-payment"),

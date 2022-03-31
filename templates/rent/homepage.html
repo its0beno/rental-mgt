@@ -137,8 +137,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
             {% endif %}
 
             {% if payment_permission %}
-              <li class="nav-item menu-open">
-                <a href="{% url 'list-payments' %}" class="nav-link {% if open == "payment" %}active {% elif open == "overdue"%} active active{% endif %}">
+              <li class="nav-item {% if open == "payment" %}menu-open{% elif open == "overdue"%} menu-open{% endif %} ">
+                <a href="{% url 'list-payments' %}" class="nav-link {% if open == "payment" %}active {% elif open == "overdue"%} active{% endif %}">
                   <i class="fa fa-credit-card" aria-hidden="true"></i>
                   <p>
                     Payments
