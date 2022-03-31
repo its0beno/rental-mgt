@@ -512,7 +512,6 @@ class RoomTypeDeleteView(LoginRequiredMixin, RoomTypeDeletePermissionMixin, Dele
             
         return HttpResponseRedirect(self.success_url)
         
-    
 class PaymentDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, DeleteView):
     model = Payment
     template_name = "rent/delete_page.html"
@@ -836,7 +835,7 @@ class BuildingUpdateView(LoginRequiredMixin, BuildingUpdatePermissionMixin, Upda
 
 
     def form_valid(self, form):
-        messages.success(self.request, 'Room Updated Successfully')
+        messages.success(self.request, 'Building Updated Successfully')
         return super().form_valid(form)
 
 

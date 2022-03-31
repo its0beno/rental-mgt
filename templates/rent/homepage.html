@@ -85,7 +85,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                with font-awesome or any other icon font library -->
             <li class="nav-item">
               <a href="{% url 'home' %}" class="nav-link {% if open == "dashboard" %}active{% endif %}">
-                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                <i class="nav-icon fas fa-chart-pie"></i>
                 <p>
                   Dashboard
                 </p>
@@ -137,13 +137,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
             {% endif %}
 
             {% if payment_permission %}
-              <li class="nav-item">
-                <a href="{% url 'list-payments' %}" class="nav-link {% if open == "payment" %}active{% endif %}">
+              <li class="nav-item menu-open">
+                <a href="{% url 'list-payments' %}" class="nav-link {% if open == "payment" %}active {% elif open == "overdue"%} active active{% endif %}">
                   <i class="fa fa-credit-card" aria-hidden="true"></i>
                   <p>
                     Payments
                   </p>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'list-payments' %}" class="nav-link {% if open == "payment" %} active{% endif %}">
+                      {% if open == "payment" %}  <i class="far fa-dot-circle nav-icon"></i> {% else %} <i class="far fa-circle nav-icon"></i> {% endif %} 
+                      <p>Payment</p>
+                    </a>
+                  </li>
+                  
+                </ul>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{% url 'over-due' %}" class="nav-link {% if open == "overdue" %}active{% endif %}">
+                      {% if open == "overdue" %}  <i class="far fa-dot-circle nav-icon"></i>{%else %}<i class="far fa-circle nav-icon"></i>{% endif %} 
+                      <p>Over Due Payment</p>
+                    </a>
+                  </li>
+                  
+                </ul>
               </li>
             {% endif %}
 
