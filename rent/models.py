@@ -38,7 +38,7 @@ class Room(models.Model):
     building = models.ForeignKey("rent.Building", verbose_name=_("Building"), on_delete=models.PROTECT)
     floor_no = models.PositiveIntegerField(_("Floor No."))
     room_type = models.ForeignKey("rent.RoomType", verbose_name=_("Room Type"), on_delete=models.PROTECT)
-    room_no = models.CharField(_("Room No."),max_length=10, unique=True)
+    room_no = models.CharField(_("Room No."),max_length=10)
     width = models.DecimalField(_("Room Width"), max_digits=5, decimal_places=2, blank=True, null=True)
     length = models.DecimalField(_("Room Length"), max_digits=5, decimal_places=2, blank=True, null= True)
     area = models.DecimalField(_("Area"), max_digits=10, decimal_places=2)
