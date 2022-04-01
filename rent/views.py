@@ -549,7 +549,7 @@ class ReportListView(LoginRequiredMixin, ReportViewPermissionMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = " Renatl Balance Report"
+        context["title"] = " Rental Balance Report"
         context["open"] = "report"
         context['obj_model'] = "report"
 
