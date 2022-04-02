@@ -75,7 +75,7 @@ def dashboard_page(request):
     reports = Report.objects.all()
     over_due = []
     for report in reports :
-        if report.outstanding_balance >=  0 :
+        if report.outstanding_balance >  0 :
             over_due.append(report)  
     
     over_due_payment = len(over_due)
@@ -768,7 +768,7 @@ def OverDuePaymentListView(request):
     reports = Report.objects.all()
     over_due = []
     for report in reports :
-        if report.outstanding_balance >=  0 :
+        if report.outstanding_balance >  0 :
             over_due.append(report)  
 
 

@@ -17,6 +17,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Room Type</th>
+                                <th>Amount</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -26,6 +27,8 @@
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ data.room_type }}</td>
+                                    <td>{{ data.room_set.count }}</td>
+
                                     
                                     <td class="product-action d-flex">
                                         {% if roomtype_change_permission %}

@@ -107,7 +107,6 @@ class PasswordChangeView(FormView):
 
 def page_not_found_view(request, exception):
     context={
-        'title': "404 Error Page",
         **permissions(request)
     }
     return render(request, '404.html', context)
@@ -115,22 +114,18 @@ def page_not_found_view(request, exception):
 
 def error_view(request):
     context={
-        'title': "500 Error Page",
         **permissions(request)
     }
     return render(request, "500.html", context)
 
 def permission_denied_view(request, exception):
     context={
-        'title': "403 Error Page",
         **permissions(request)
     }
     return render(request, "403.html", context)
 
 def bad_request_view(request, exception):
     context={
-        'title': "400 Error Page",
         **permissions(request)
     }
-    print(exception)
     return render(request, "400.html")
