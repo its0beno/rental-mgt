@@ -525,6 +525,9 @@ class PaymentDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, Delete
         
         return {**context, **permissions(self.request)}
 
+
+@login_required
+@permission_required(perm="rent.view_report", raise_exception=True)
 def MonthlyReportListView(request):
     month = request.GET.get("month", timezone.now().month)
     year = request.GET.get("year", timezone.now().year)
@@ -742,7 +745,8 @@ def EditUserData(request):
 
     return render(request, "authentication/change-user-info.html", context)
 
-
+@login_required
+@permission_required(perm = "rent.view_payment", raise_exception=True)
 def OverDuePaymentListView(request):
     if request.method == 'POST':
         if "selected_id" in request.POST:

@@ -43,7 +43,7 @@
                     Renter Name
                 </dt>
                 <dd class="col-sm-10">
-                    {{ object.get_full_name }}
+                    {{ object.full_name }}
                 </dd>
                 <dt class="col-sm-2">
                     Phone Number
@@ -56,12 +56,6 @@
                 </dt>
                 <dd class="col-sm-10">
                     {{ object.room }} 
-                </dd>
-                <dt class="col-sm-2">
-                    ID No
-                </dt>
-                <dd class="col-sm-10">
-                    {{ object.id_no }}
                 </dd>
                 </dl>
             {% elif obj_model == "roomtype" %}
