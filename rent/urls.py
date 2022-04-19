@@ -44,5 +44,6 @@ urlpatterns = [
     path("register-building/", views.BuildingCreateView.as_view(), name = "register-building"),
     path("update-building/<int:pk>/", views.BuildingUpdateView.as_view(), name = "update-building"),
     path("delete-building/<int:pk>/", views.BuildingDeleteView.as_view(), name = "delete-building"),
+    path("room-report/", views.RoomReport, name = "room-reports"),
    
 ]

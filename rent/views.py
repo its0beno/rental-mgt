@@ -1,3 +1,4 @@
+from telnetlib import STATUS
 from bot.message_sender import overdue_message_formatter
 from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -877,3 +878,32 @@ def RoomPrice(request, pk):
     room_price = renter.room.total_price
 
     return JsonResponse({"price":room_price})
+
+
+@login_required
+@permission_required(perm = "rent.view_roomtype")
+def RoomReport(request):
+    Rooms = RoomType.objects.all()
+
+    context = {
+        "room_types":[],
+        "open":"report",
+        "title" :"Room Report",
+        'obj_model': 'report',
+        **permissions(request),
+    }
+    
+    for vacant in Rooms :
+        vacant_rooms = vacant.room_set.filter(status = 'vacant').count()
+
+        total_rooms = vacant.room_set.count()
+        data  = {
+            'roomtype' : vacant.room_type,
+            'vacant_rooms': vacant_rooms,
+            'total_rooms': total_rooms
+        }
+        context['room_types'].append(data)
+    print(context)    
+    
+
+    return render(request, "rent/room-report.html", context)
