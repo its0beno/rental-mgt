@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db.models import Sum
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta as rel
@@ -248,3 +249,16 @@ class Report(models.Model):
         self.total_paid = self.total_paid_calculator()
 
         return super().save()
+
+
+
+
+
+# class Penality(models.Model):
+#     report = models.ForeignKey("rent.Report", verbose_name=_("Report"), on_delete=models.PROTECT)
+#     deafult_date = models.PositiveIntegerField(_("D"), max_digits=20, decimal_places=2, default=0)
+
+#     # @property
+#     # def amount_of_penality(self):
+#         # if self.report.payable_month < 0.3 :
+#             # 

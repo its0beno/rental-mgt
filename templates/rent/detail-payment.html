@@ -2,8 +2,8 @@
 
 {% block main_page %}
 <div class="content">
-    <div class="container-fluid">            
-        <div class="card">
+    <div class="container-fluid">
+        <div id='example1' class="card">
             <div class="card-header bg-primary">
                 <h3 class="card-title">
                     Payment For: {{object.renter}}
@@ -77,6 +77,42 @@
             </div>
             
         </div>
+        <input class='btn btn-primary ml-auto' type="button" value="Print" onclick="printDiv()">             
     </div>
 </div>
 {% endblock main_page %}
+
+{% block scripts %}
+    {% load static %}
+
+        <script>
+            function printDiv() {
+                var divContents = document.getElementById("example1").innerHTML;
+                var a = window.open('', '', 'height=1000, width=1000');
+                a.document.write(divContents);
+                a.document.close();
+                a.print();
+                divContents.print();
+            }
+        </script>        
+    
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                $(function(){
+                var Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                    Toast.fire({
+                        icon:'{{ message.tags }}',
+                        title:"{{ message|safe }}"
+                    })
+                })
+            </script>
+        {% endfor %}
+    {% endif %}
+    
+{% endblock scripts %}
