@@ -59,7 +59,7 @@
                         No Of Months
                     </dt>
                     <dd class="col-sm-8">
-                        {{ object.no_of_months}} months
+                        {{ object.no_of_months}} {% if object.no_of_months == 1  %} Month {% else%} Months {% endif %} 
                     </dd>
                     <dt class="col-sm-4">
                         Invoice No
