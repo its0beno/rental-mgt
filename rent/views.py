@@ -303,10 +303,10 @@ class PaymentCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, Create
 
 
     def form_valid(self, form):
-        messages.success(self.request, 'Payment Registered Successfully')
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
-
+        messages.success(self.request, 'Payment Registered Successfully')
+        
 
         return super().form_valid(form)
 

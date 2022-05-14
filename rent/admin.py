@@ -1,7 +1,7 @@
-# from django.contrib import admin
-# from .models import *
+from django.contrib import admin
+from .models import *
 
-# # Register your models here.
+# Register your models here.
 
 
 # @admin.register(Room)
@@ -19,6 +19,7 @@
 #     readonly_fields = ('total_paid',)
 
 
+admin.site.register(Penality)
 # admin.site.register(Payment)
 # admin.site.register(Building)
 # admin.site.register(UserAdditionalInfo)
