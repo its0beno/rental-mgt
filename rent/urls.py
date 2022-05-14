@@ -24,7 +24,7 @@ urlpatterns = [
     path("room-price/", views.RoomPrice, name = "room-price"),
     path("room-price/<int:pk>/", views.RoomPrice),
     path("list-payment/", views.PaymentListView.as_view(), name= "list-payments"),
-    path("detial-payment/<int:pk>/", views.PaymentDetailView.as_view(), name= "detail-payment"),
+    path("detail-payment/<int:pk>/", views.PaymentDetailView.as_view(), name= "detail-payment"),
     path("edit-payment/<int:pk>/", views.PaymentUpdateView.as_view(), name= "update-payment"),
     path("list-menu-report/", views.ReportMenuView, name= "list-menu-reports"),
     path("list-roomtype/", views.RoomTypeListView.as_view(), name= "list-roomtypes"),
@@ -43,7 +43,11 @@ urlpatterns = [
     path("list-building/", views.BuildingListView.as_view(), name = "list-buildings"),
     path("register-building/", views.BuildingCreateView.as_view(), name = "register-building"),
     path("update-building/<int:pk>/", views.BuildingUpdateView.as_view(), name = "update-building"),
+    path("update-penality/<int:pk>/", views.PenalityUpdateView.as_view(), name = "update-penality"),
     path("delete-building/<int:pk>/", views.BuildingDeleteView.as_view(), name = "delete-building"),
+    path("delete-penality/<int:pk>/", views.PenalityDeleteView.as_view(), name = "delete-penality"),
     path("room-report/", views.RoomReport, name = "room-reports"),
+    path("list-penality/", views.PenalityListView.as_view() , name = "list-penality"),
+    path("register-penality/", views.PenalityCreateView.as_view(), name= "register-penality"),
    
 ]

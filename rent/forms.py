@@ -282,3 +282,19 @@ class RegisterBuildingForm(forms.ModelForm):
             "address",
         ]
 
+
+class RegisterPenalityForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterPenalityForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class']= 'form-control'
+
+    class Meta :
+        model = Penality
+        fields = [
+            "date_from", 
+            "date_to",
+            "penality_fee_percent",
+        ]
+

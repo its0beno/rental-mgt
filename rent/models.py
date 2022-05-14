@@ -242,6 +242,40 @@ class Report(models.Model):
         else:
             return "Hasn't Paid Yet"
 
+    @property
+    def penality(self):
+        if self.outstanding_balance < 0:
+            # No penality
+            return 0
+        
+        last_paid_date = self.last_paid_date
+        if type(last_paid_date) == str:
+            last_paid_date = self.renter.date_admitted
+
+        number_of_days = rel(timezone.localtime().now(), last_paid_date)
+        year   = number_of_days.years
+        months = number_of_days.months
+        days   = number_of_days.days
+
+
+        total_days = ((year*12)+(months))*30 + days
+
+        lookup_fields = models.Q(date_from__lte = total_days) & models.Q(date_to__gte = total_days)
+
+        penality_query = Penality.objects.filter(lookup_fields)
+
+        if not penality_query.exists():
+            return 0
+
+        penality = penality_query.first()
+
+        penality_amount = (penality.penality_fee_percent / 100) * self.renter.room.total_price
+
+        return round(penality_amount, 2)
+
+        
+
+
 
     def save(self):
         self.payable_month = self.payable_months_value
@@ -252,13 +286,17 @@ class Report(models.Model):
 
 
 
+class Penality(models.Model):
+    date_from = models.PositiveIntegerField()
+    date_to = models.PositiveIntegerField()
+    penality_fee_percent = models.DecimalField(max_digits=3, decimal_places=2)
 
 
-# class Penality(models.Model):
-#     report = models.ForeignKey("rent.Report", verbose_name=_("Report"), on_delete=models.PROTECT)
-#     deafult_date = models.PositiveIntegerField(_("D"), max_digits=20, decimal_places=2, default=0)
+    def __str__(self):
+        return f"{self.date_from} -> {self.date_to}"
 
-#     # @property
-#     # def amount_of_penality(self):
-#         # if self.report.payable_month < 0.3 :
-#             # 
+class PenaliyPaymentHistory(models.Model):
+    renter = models.ForeignKey("rent.Renter", verbose_name=_("Renter"), on_delete=models.PROTECT)
+    amount = models.ForeignKey("rent.Report", verbose_name=_("Penality"), on_delete=models.PROTECT)
+
+

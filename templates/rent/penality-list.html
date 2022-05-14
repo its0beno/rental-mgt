@@ -7,50 +7,46 @@
         <div class="card">
             
             <div class="card-header bg-primary">
-                <h3 class="card-title ">List of {{ obj_model.capitalize }}</h3>
+                <h3 class="card-title ">List of All {{ obj_model.capitalize }}</h3>
             </div>
             <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
+                <a class="btn btn-outline-primary float-right mb-3"
+                href="{% url 'register-penality' %}">Add New Penality</a>
+                <table id="example1" class="table table-bordered table-striped" width="100%">
                     <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Renter</th>
-                                <th>Room No</th>
-                                <th>Monthly Rate</th>
-                                <th>Payable Months</th>
-                                <th>Payable Amount</th>
-                                <th>Paid</th>
-                                <th>Outstanding Balance</th>
-                                <th>Last Payment date</th>
-                                <th>Penality</th>
+                                <th>Date From</th>
+                                <th>Date To</th>
+                                <th>Percent Fee</th>
                             </tr>
                         </thead>
                         <tbody>
-                        
-                            
                         {% if object_list.count > 0 %}
                             {% for data in object_list %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ data.renter }}</td>
-                                    <td>{{ data.renter.room }}</td>
-                                    <td>{{ data.monthly_rate }}</td>
-                                    {% if data.renter.is_rented %}
-                                        <td>{{ data.payable_months_value }}</td>
-                                        <td>{{ data.payable_amount_value }}</td>
-                                    {% else %}
-                                        <td>{{ data.payable_month }}</td>
-                                        <td>{{ data.payable_amount }}</td>
-                                    {% endif %}
-                                    <td>{{ data.total_paid }}</td>
-                                    <td>{{ data.outstanding_balance }}</td>
-                                    <td>{{ data.last_paid_date }}</td>
-                                    <td>{{ data.penality }}</td>
+                                    <td>{{ data.date_from }}</td>
+                                    <td>{{ data.date_to }}</td>
+                                    <td>{{ data.penality_fee_percent }}</td>
+                                    
+                                    <td class="product-action d-flex">
+                                        <a class="btn btn-info btn-sm mr-3" href="{% url 'update-penality' pk=data.id %}">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Edit
+                                        </a>
+                                        <a class="btn btn-danger btn-sm mr-3" href="{% url 'delete-penality' pk=data.id  %}">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            Delete
+                                        </a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         {% else %}
                                 <tr>
-                                    <td colspan="9" class="dataTables_empty text-center" valign="top">No records found</td>
+                                    <td colspan="3" class="dataTables_empty text-center" valign="top">No records found</td>
                                 </tr>
                     
                         {% endif %}      
@@ -79,7 +75,7 @@
             $("#example1").DataTable({
               "scrollX":true,
               "buttons": ["copy", "excel", "pdf", "print"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#example1_wrapper .col-md-3:eq(0)');
           });
         </script>
         {% if messages %}
