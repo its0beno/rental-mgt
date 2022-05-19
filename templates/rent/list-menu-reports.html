@@ -1,58 +1,99 @@
 {% extends 'rent/homepage.html' %}
-
 {% load static %}
 
-
 {% block main_page %}
-<div class="content h-100%">
+<div class="content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="card w-100" >
-                <div class="card-header bg-danger">
-                    Reports
-                </div>
-                    <div class="card-body d-flex">
-                    <div class="col-lg-4 col-3 ">
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h4 class="pb-5" >Monthly Payment Report</h4>
-                            </div>
-                            <div class="icon">
-                                <i class="fa fa-building "></i>
-                            </div>
-                            <a href="{% url 'list-monthly-reports' %}" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4 col-3">
-                        <div class="small-box bg-warning">
-                            <div class="inner">
-                                <h4 class="pb-5">Rental Balances Report</h4>
-                            </div>
-                            <div class="icon">
-                                <i class="fa fa-folder" aria-hidden="true"></i>
-                            </div>
-                            <a href="{% url 'list-reports' %}" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-3 w-inherit">
-                        <div class="small-box bg-success">
-                            <div class="inner">
-                                <h4 class="pb-5">Room Report</h4>
-                            </div>
-                            <div class="icon">
-                                <i class="fa fa-building "></i>
-                            </div>
-                            <a href="{% url 'room-reports' %}" class="small-box-footer">More info <i
-                                    class="fas fa-arrow-circle-right"></i></a>
-                        </div>
+        <div class="card">
+            
+            <div class="card-header bg-primary">
+                <h3 class="card-title ">List of All {{ obj_model.capitalize }}</h3>
+            </div>
+            <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped" width="100%">
+                    <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Reports</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% if object_list.count > 0 %}
+                            {% for data in object_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ data.name }}</td>
+                                    <td>{{ data.address }}</td>
+                                    
+                                    <td class="product-action d-flex">
+                                        <a class="btn btn-info btn-sm mr-3" href="{% url 'building-monthly-report' pk=data.id %}">
+                                            <i class="fa fa-users" aria-hidden="true"></i>
+                                            Monthly Report
+                                        </a>
+                                        <a class="btn btn-success btn-sm mr-3" href="{% url 'list-reports' pk=data.id  %}">
+                                            <i class="fa fa-folder" aria-hidden="true"></i>
+                                            Rental Report
+                                        </a>
+                                        <a class="btn btn-primary btn-sm mr-3" href="{% url 'room-reports' pk=data.id  %}">
+                                            <i class="fa fa-building "></i>
+                                            Room Report
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                                <tr>
+                                    <td colspan="4" class="dataTables_empty text-center" valign="top">No records found</td>
+                                </tr>
+                    
+                        {% endif %}      
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-{% endblock main_page %}
+        {% endblock main_page %}
+        
+        
+        {% block scripts %}
+        {% load static %}
+        <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+        <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+        <script>
+          $(function () {
+            $("#example1").DataTable({
+              "scrollX":true,
+              "buttons": ["copy", "excel", "pdf", "print"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-3:eq(0)');
+          });
+        </script>
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    $(function(){
+                      var Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                        Toast.fire({
+                            icon:'{{ message.tags }}',
+                            title:"{{ message|safe }}"
+                        })
+                    })
+                </script>
+            {% endfor %}
+        {% endif %}
+        
+        {% endblock scripts %}

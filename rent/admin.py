@@ -19,7 +19,7 @@ class ReportAdmin(admin.ModelAdmin):
     readonly_fields = ('total_paid',)
 
 
-admin.site.register(Penality)
+# admin.site.register(Penality)
 admin.site.register(Payment)
 admin.site.register(Building)
 admin.site.register(UserAdditionalInfo)

@@ -162,15 +162,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </li>
                   
                 </ul>
-                <ul class="nav nav-treeview">
+                {% comment %} <ul class="nav nav-treeview">
                   <li class="nav-item">
                     <a href="{% url 'list-penality' %}" class="nav-link {% if open == "penality" %}active{% endif %}">
                       {% if open == "penality" %}  <i class="far fa-dot-circle nav-icon"></i>{%else %}<i class="far fa-circle nav-icon"></i>{% endif %} 
                       <p>Penality</p>
                     </a>
                   </li>
-                  
-                </ul>
+                </ul> {% endcomment %}
               </li>
             {% endif %}
 
