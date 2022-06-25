@@ -40,10 +40,10 @@
                         <div class="info-box bg-light">
                             <div class="info-box-content">
                                 <span class="info-box-text text-center text-muted">
-                                    Deposited Amount
+                                    Building Name
                                 </span>
                                 <span class="info-box-number text-center text-muted">
-                                        <span class="">{{object.deposited_amount}}</span>
+                                        <span class="">{{object.room.building}}</span>
                                 </span>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                         Date Admitted
                     </dt>
                     <dd class="col-sm-8">
-                        {{ object.room.date_admitted }} m
+                        {{ object.date_admitted }}
                     </dd>
                     <dt class="col-sm-4">
                         Area
