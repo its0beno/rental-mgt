@@ -10,6 +10,13 @@
                 <h3 class="card-title ">List of {{ obj_model.capitalize }}</h3>
             </div>
             <div class="card-body">
+                <form action="" method="post">
+                    {% csrf_token %}
+                <center>
+                From: <input type="date" name="fromdate">
+                To: <input type="date"  name="todate">
+                <input type="submit" name="Search" value="Search">
+                </center>
                 <table id="example1" class="table table-bordered table-striped" width="100%">
                     <thead>
                         <tr class="sorting sorting_desc">
@@ -57,6 +64,7 @@
                             
                     </tbody>
                 </table>
+            </form>
             </div>
         </div>
     </div>

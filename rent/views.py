@@ -530,48 +530,45 @@ class PaymentDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, Delete
         return {**context, **permissions(self.request)}
 
 
-# @login_required
-# @permission_required(perm="rent.view_report", raise_exception=True)
-# def MonthlyReportListView(request):
-#     month = request.GET.get("month", timezone.now().month)
-#     year = request.GET.get("year", timezone.now().year)
-#     reports = Payment.objects.filter(paid_date__month= month, paid_date__year = year)
-#     total = reports.aggregate(Sum('amount')).get("amount__sum")
-
-#     context = {
-#         "object_list":reports,
-#         "total":total,
-#         "open":"report",
-#         "title" :"Monthly Report",
-#         'obj_model': 'report',
-#         **permissions(request),
-#     }
-
-#     return render(request, "rent/list-monthly-report.html", context)
-
 
 @login_required
 @permission_required(perm="rent.view_report", raise_exception=True)
 def BuildingMonthlyReportListView(request, pk):
-    month = request.GET.get("month", timezone.now().month)
-    year = request.GET.get("year", timezone.now().year)
-    reports = Payment.objects.filter(
-              paid_date__month= month, 
-              paid_date__year = year, 
+    if request.method == "POST":
+        fromdate = request.POST.get("fromdate")
+        todate = request.POST.get("todate")
+        reports = Payment.objects.filter(
+              paid_date__gte = fromdate, 
+              paid_date__lte = todate,
               renter__room__building__id=pk
-    )
-    total = reports.aggregate(Sum('amount')).get("amount__sum")
-
-    context = {
+        )
+        total = reports.aggregate(Sum('amount')).get("amount__sum")
+        context = {
         "object_list":reports,
         "total":total,
         "open":"report",
         "title" :"Monthly Report",
         'obj_model': 'report',
         **permissions(request),
-    }
+        }
+        return render(request, "rent/list-monthly-report.html", context)
+    else:
+        reports = Payment.objects.filter(
+                  renter__room__building__id=pk
+        )
+        total = reports.aggregate(Sum('amount')).get("amount__sum")
+
+        context = {
+            "object_list":reports,
+            "total":total,
+            "open":"report",
+            "title" :"Monthly Report",
+            'obj_model': 'report',
+            **permissions(request),
+        }
 
     return render(request, "rent/list-monthly-report.html", context)
+
 
 
 class ReportListView(LoginRequiredMixin, ReportViewPermissionMixin, ListView):
