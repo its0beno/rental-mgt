@@ -23,3 +23,4 @@ class ReportAdmin(admin.ModelAdmin):
 admin.site.register(Payment)
 admin.site.register(Building)
 admin.site.register(UserAdditionalInfo)
+admin.site.register(Vat)

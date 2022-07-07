@@ -1,4 +1,5 @@
 from email.policy import default
+from pyexpat import model
 from django.db.models import Sum
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta as rel
@@ -143,6 +144,8 @@ class Payment(models.Model):
     slip_no = models.CharField(_("Slip No"), max_length=50)
     payment_method = models.CharField(_("Payment Method"), max_length=50, choices= PAYMENT_METHOD_CHOICES)
     remark = models.TextField(_("Remark"), blank=True, default="No Remark.")
+    vat = models.DecimalField(_("VAT Amount"), max_digits=10, decimal_places=2)
+    Penality = models.DecimalField(_("Penality Amount"), max_digits=10, decimal_places=2 )
 
     # Reports
     report = models.ForeignKey("rent.Report", verbose_name=_("Reported to."), on_delete=models.PROTECT, blank=True)
@@ -162,11 +165,11 @@ class Payment(models.Model):
         except :
             pass
         if report:
-            report.new_paid = self.amount
+            report.new_paid = self.amount + self.vat + self.Penality
         else:
             report = Report()
             report.renter=self.renter
-            report.total_paid=self.amount
+            report.total_paid=self.amount + self.vat + self.Penality
 
         report.save()
         self.report = report
@@ -197,7 +200,6 @@ class Report(models.Model):
     payable_month = models.DecimalField(_("Payable Month"), max_digits=20, decimal_places=2, default=0)
     payable_amount = models.DecimalField(_("Payable Amount"), max_digits=10, decimal_places=2, default=0)
     total_paid = models.DecimalField(_("Total Paid"), max_digits=10, decimal_places=2, default=0, editable=False)
-
 
     def total_paid_calculator(self) -> Decimal:
         amount = self.payment_set.all().aggregate(Sum('amount')) 
@@ -242,36 +244,36 @@ class Report(models.Model):
         else:
             return "Hasn't Paid Yet"
 
-    # @property
-    # def penality(self):
-    #     if self.outstanding_balance < 0:
-    #         # No penality
-    #         return 0
+    @property
+    def penality(self):
+        if self.outstanding_balance < 0:
+            # No penality
+            return 0
         
-    #     last_paid_date = self.last_paid_date
-    #     if type(last_paid_date) == str:
-    #         last_paid_date = self.renter.date_admitted
+        last_paid_date = self.last_paid_date
+        if type(last_paid_date) == str:
+            last_paid_date = self.renter.date_admitted
 
-    #     number_of_days = rel(timezone.localtime().now(), last_paid_date)
-    #     year   = number_of_days.years
-    #     months = number_of_days.months
-    #     days   = number_of_days.days
+        number_of_days = rel(timezone.localtime().now(), last_paid_date)
+        year   = number_of_days.years
+        months = number_of_days.months
+        days   = number_of_days.days
 
 
-    #     total_days = ((year*12)+(months))*30 + days
+        total_days = ((year*12)+(months))*30 + days
 
-    #     lookup_fields = models.Q(date_from__lte = total_days) & models.Q(date_to__gte = total_days)
+        lookup_fields = models.Q(date_from__lte = total_days) & models.Q(date_to__gte = total_days)
 
-    #     penality_query = Penality.objects.filter(lookup_fields)
+        penality_query = Penality.objects.filter(lookup_fields)
 
-    #     if not penality_query.exists():
-    #         return 0
+        if not penality_query.exists():
+            return 0
 
-    #     penality = penality_query.first()
+        penality = penality_query.first()
 
-    #     penality_amount = (penality.penality_fee_percent / 100) * self.renter.room.total_price
+        penality_amount = (penality.penality_fee_percent / 100) * self.renter.room.total_price
 
-    #     return round(penality_amount, 2)
+        return round(penality_amount, 2)
 
         
 
@@ -286,17 +288,18 @@ class Report(models.Model):
 
 
 
-# class Penality(models.Model):
-    # date_from = models.PositiveIntegerField()
-    # date_to = models.PositiveIntegerField()
-    # penality_fee_percent = models.DecimalField(max_digits=3, decimal_places=2)
-# 
-# 
-    # def __str__(self):
-        # return f"{self.date_from} -> {self.date_to}"
+class Penality(models.Model):
+    date_from = models.PositiveIntegerField()
+    date_to = models.PositiveIntegerField()
+    penality_fee_percent = models.DecimalField(max_digits=4, decimal_places=2)
 
-# class PenaliyPaymentHistory(models.Model):
-    # renter = models.ForeignKey("rent.Renter", verbose_name=_("Renter"), on_delete=models.PROTECT)
-    # amount = models.ForeignKey("rent.Report", verbose_name=_("Penality"), on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f"{self.date_from} -> {self.date_to}"
+
+class Vat(models.Model):
+    vat_percent = models.DecimalField(_("Vat Pecentage"), max_digits=5, decimal_places=2, default=15)
+
+    
 
 

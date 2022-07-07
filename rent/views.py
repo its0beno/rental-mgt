@@ -905,6 +905,29 @@ def RoomPrice(request, pk):
 
 
 @login_required
+@permission_required(perm = "rent.view_report")
+def RoomPenality(request, pk):
+    renter = Report.objects.get(id = pk)
+
+    room_penality = renter.penality
+
+    return JsonResponse({"penality":room_penality})
+
+
+@login_required
+@permission_required(perm = "rent.view_report")
+def PaymentVat(request):
+    payment_vat = Vat.objects.get()
+
+    vat = payment_vat.vat_percent / 100
+
+    
+    return JsonResponse({"vat":vat})
+
+
+
+
+@login_required
 @permission_required(perm = "rent.view_roomtype")
 def RoomReport(request, pk):
     Rooms = RoomType.objects.all()
@@ -935,65 +958,81 @@ def RoomReport(request, pk):
 
 
 
-# class PenalityListView(LoginRequiredMixin, PaymentViewPermissionMixin, ListView):
-#     model = Penality
-#     template_name = "rent/penality-list.html"
+class PenalityListView(LoginRequiredMixin, PaymentViewPermissionMixin, ListView):
+    model = Penality
+    template_name = "rent/penality-list.html"
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["title"] = " Rental Balance Report"
-#         context["open"] = "penality"
-#         context['obj_model'] = "report"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = " Rental Balance Report"
+        context["open"] = "penality"
+        context['obj_model'] = "report"
 
-#         return {**context, **permissions(self.request)} 
+        return {**context, **permissions(self.request)} 
 
 
-# class PenalityDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, DeleteView):
-#     model = Penality
-#     template_name = "rent/delete_page.html"
-#     success_url = reverse_lazy('list-penality')
+class PenalityDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, DeleteView):
+    model = Penality
+    template_name = "rent/delete_page.html"
+    success_url = reverse_lazy('list-penality')
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["title"] = "Penality"
-#         context["open"] = "penality"
-#         context['obj_model'] = "penality" 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Penality"
+        context["open"] = "penality"
+        context['obj_model'] = "penality" 
         
         
-#         return {**context, **permissions(self.request)}
+        return {**context, **permissions(self.request)}
 
 
 
-# class PenalityUpdateView(LoginRequiredMixin, PaymentUpdatePermissionMixin, UpdateView):
-#     login_required = True
-#     model = Penality
-#     form_class = RegisterPenalityForm
-#     context_object_name = "form"
-#     success_url = reverse_lazy("list-penality")
-#     template_name = "rent/register.html"
+class PenalityUpdateView(LoginRequiredMixin, PaymentUpdatePermissionMixin, UpdateView):
+    login_required = True
+    model = Penality
+    form_class = RegisterPenalityForm
+    context_object_name = "form"
+    success_url = reverse_lazy("list-penality")
+    template_name = "rent/register.html"
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["title"] = "Penality"
-#         context["card_header"] = "Update Penality"
-#         context["open"] = "penality"
-
-
-#         return {**context, **permissions(self.request)}
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Penality"
+        context["card_header"] = "Update Penality"
+        context["open"] = "penality"
 
 
+        return {**context, **permissions(self.request)}
 
-# class PenalityCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, CreateView):
-#     form_class = RegisterPenalityForm
-#     success_url = reverse_lazy('list-penality')
-#     context_object_name = 'form'
-#     template_name = 'rent/register.html'
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["tab_name"] = "Register"
-#         context["title"] = "Penality"
-#         context["card_header"] = "Register Penality"
-#         context["open"] = "penality"
 
-#         return {**context, **permissions(self.request)}
+class PenalityCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, CreateView):
+    form_class = RegisterPenalityForm
+    success_url = reverse_lazy('list-penality')
+    context_object_name = 'form'
+    template_name = 'rent/register.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tab_name"] = "Register"
+        context["title"] = "Penality"
+        context["card_header"] = "Register Penality"
+        context["open"] = "penality"
+
+        return {**context, **permissions(self.request)}
+
+
+class VatCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, CreateView):
+    form_class = RegisterVatForm
+    success_url = reverse_lazy('list-penality')
+    context_object_name = 'form'
+    template_name = 'rent/register.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tab_name"] = "Register"
+        context["title"] = "VAT"
+        context["card_header"] = "VAT"
+        context["open"] = "penality"
+
+        return {**context, **permissions(self.request)}

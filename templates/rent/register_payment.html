@@ -50,22 +50,27 @@
         const renterField = $("#id_renter");
         const monthField = $("#id_no_of_months");
         const amountField = $("#id_amount");
+        const penalityField = $("#id_Penality");
+        const vatField = $("#id_vat");
         let price;
+        let penality;
+        let vat;
         renterField.on("change",()=>{
             const value = renterField.val();
             if (parseInt(value)>0){
                 fetch('{% url "room-price" %}' + `${value}/`).then((response)=>{response.json().then((data)=>{price = data.price; monthField.trigger("keyup")})})
+                fetch('{% url "room-penality" %}' + `${value}/`).then((response)=>{response.json().then((data1)=>{penality = data1.penality; monthField.trigger("keyup")})})
+                fetch('{% url "payment-vat" %}').then((response)=>{response.json().then((data2)=>{vat = data2.vat; monthField.trigger("keyup")})})
                 
             }
         })
 
         monthField.on("keyup", ()=>{
-            amountField.val(price * parseInt(monthField.val()));
+          amountField.val(price * parseInt(monthField.val()));
+          penalityField.val(penality);
+          vatField.val(vat  * parseInt(amountField.val()));
         })
-
-        console.log(monthField)
-        
-
+       
         
     });
 </script>
