@@ -120,7 +120,7 @@ class RegisterPaymentForm(forms.ModelForm):
             "no_of_months",
             "amount",
             "vat",
-            "Penality",
+            "penality",
             "invoice_no",
             "slip_no",
             "payment_method",

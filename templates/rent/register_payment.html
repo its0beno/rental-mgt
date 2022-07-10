@@ -50,7 +50,7 @@
         const renterField = $("#id_renter");
         const monthField = $("#id_no_of_months");
         const amountField = $("#id_amount");
-        const penalityField = $("#id_Penality");
+        const penalityField = $("#id_penality");
         const vatField = $("#id_vat");
         let price;
         let penality;
@@ -70,7 +70,10 @@
           penalityField.val(penality);
           vatField.val(vat  * parseInt(amountField.val()));
         })
-       
+
+        amountField.on("keyup", ()=>{
+          vatField.val(vat  * parseInt(amountField.val()));
+        })
         
     });
 </script>

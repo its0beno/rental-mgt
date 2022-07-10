@@ -16,14 +16,14 @@ from .mixins import *
 # Create your views here.
 
 def permissions(request):
-    context ={
-        
+    context = {
+
 
         'building_permission': request.user.has_perm(perm="rent.view_building"),
         'building_add_permission': request.user.has_perm(perm="rent.add_building"),
         'building_change_permission': request.user.has_perm(perm="rent.change_building"),
         'building_delete_permission': request.user.has_perm(perm="rent.delete_building"),
-        
+
 
         'renter_permission': request.user.has_perm(perm="rent.view_renter"),
         'renter_add_permission': request.user.has_perm(perm="rent.add_renter"),
@@ -43,7 +43,7 @@ def permissions(request):
         'room_delete_permission': request.user.has_perm(perm="rent.delete_room"),
 
 
-        'user_permission': request.user.has_perm(perm="auth.view_user"),  
+        'user_permission': request.user.has_perm(perm="auth.view_user"),
         'user_add_permission': request.user.has_perm(perm="auth.add_user"),
         'user_change_permission': request.user.has_perm(perm="auth.change_user"),
         'user_delete_permission': request.user.has_perm(perm="auth.delete_user"),
@@ -52,7 +52,7 @@ def permissions(request):
         'payment_permission': request.user.has_perm(perm="rent.view_payment"),
         'payment_delete_permission': request.user.has_perm(perm="rent.delete_payment"),
         'payment_change_permission': request.user.has_perm(perm="rent.change_payment"),
-        'payment_add_permission': request.user.has_perm(perm="rent.add_payment"),  
+        'payment_add_permission': request.user.has_perm(perm="rent.add_payment"),
 
         'report_permission': request.user.has_perm(perm="rent.view_report"),
 
@@ -66,23 +66,36 @@ def dashboard_page(request):
     rooms = Room.objects.filter(is_active=True)
     renters = Renter.objects.filter(is_rented=True)
     payments = Payment.objects.all()
-    rooms_rented_this_month = renters.filter(is_rented=True).filter(updated_date__year = timezone.now().year, updated_date__month = timezone.now().month).count()
-    amount_collected_this_month = payments.filter(paid_date__year = timezone.now().year, paid_date__month = timezone.now().month).aggregate(Sum('amount')).get("amount__sum")
-    this_year_balance = payments.filter(updated_date__year = timezone.now().year).aggregate(Sum('amount')).get("amount__sum")
+
+    rooms_rented_this_month = renters.filter(is_rented=True).filter(
+        updated_date__year=timezone.now().year, 
+        updated_date__month=timezone.now().month).count()
+
+    
+    this_month = payments.filter(paid_date__year=timezone.now().year, 
+    paid_date__month=timezone.now().month)
+    this_month_amount = this_month.aggregate(Sum('amount')).get("amount__sum")
+    this_month_vat = this_month.aggregate(Sum('vat')).get("vat__sum")
+    this_month_penality = this_month.aggregate(Sum('penality')).get("penality__sum")
+    amount_collected_this_month = this_month_amount + this_month_penality + this_month_vat
+
+
+    this_year = payments.filter(updated_date__year=timezone.now().year)
+    this_year_amount = this_year.aggregate(Sum('amount')).get("amount__sum")
+    this_year_penality = this_year.aggregate(Sum('penality')).get("penality__sum")
+    this_year_vat = this_year.aggregate(Sum('vat')).get("vat__sum")
+    this_year_balance = this_month_amount + this_month_penality + this_month_vat
     # Over Due Payments
-    free_rooms = Room.objects.filter(status = "vacant").count()
-    used_rooms = Room.objects.filter(status = "occupied").count()
+    free_rooms = Room.objects.filter(status="vacant").count()
+    used_rooms = Room.objects.filter(status="occupied").count()
     # over_due_payments = Report.objects.filter(payable_month = 1).count()
     reports = Report.objects.all()
     over_due = []
-    for report in reports :
-        if report.outstanding_balance >  0 :
-            over_due.append(report)  
-    
-    over_due_payment = len(over_due)
-    
-   
+    for report in reports:
+        if report.outstanding_balance > 0:
+            over_due.append(report)
 
+    over_due_payment = len(over_due)
 
     context = {
         "rooms": rooms,
@@ -97,12 +110,11 @@ def dashboard_page(request):
         "tab_name": "Dashboard",
         "open": "dashboard",
         "card-header": "Dashboard",
-        "used_rooms" : used_rooms,
+        "used_rooms": used_rooms,
         **permissions(request)
     }
 
     return render(request, 'rent/dashboard.html', context)
-
 
 
 class RoomCreateView(LoginRequiredMixin, RoomCreatePermissionMixin, CreateView):
@@ -126,7 +138,6 @@ class RoomCreateView(LoginRequiredMixin, RoomCreatePermissionMixin, CreateView):
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
 
-
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -137,10 +148,10 @@ class RoomCreateView(LoginRequiredMixin, RoomCreatePermissionMixin, CreateView):
 class RoomListView(LoginRequiredMixin, RoomViewPermissionMixin, ListView):
     model = Room
     template_name = "rent/list.html"
-    filter=None
+    filter = None
 
     def get(self, *args, **kwargs):
-        self.filter = kwargs.get("filter",None)
+        self.filter = kwargs.get("filter", None)
         return super().get(self.request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -148,19 +159,17 @@ class RoomListView(LoginRequiredMixin, RoomViewPermissionMixin, ListView):
         context["title"] = "Room"
         context["open"] = "room"
         context['obj_model'] = "room"
-        
-        
+
         return {**context, **permissions(self.request)}
 
     def get_queryset(self):
         rooms = Room.objects.filter(is_active=True)
         if self.filter:
-            rooms = Room.objects.filter(is_active=True).filter(status= self.filter)
-            
+            rooms = Room.objects.filter(
+                is_active=True).filter(status=self.filter)
+
         return rooms
 
-    
-    
 
 class RoomDetailView(LoginRequiredMixin, RoomViewPermissionMixin, DetailView):
     model = Room
@@ -189,18 +198,13 @@ class RoomUpdateView(LoginRequiredMixin, RoomUpdatePermissionMixin, UpdateView):
         context["card_header"] = "Update Room"
         context["open"] = "room"
 
-
         return {**context, **permissions(self.request)}
-
 
     def form_valid(self, form):
         messages.success(self.request, 'Room Updated Successfully')
         form.instance.updated_by = self.request.user
 
-
         return super().form_valid(form)
-
-
 
 
 class RenterCreateView(CreateView, LoginRequiredMixin, RenterCreatePermissionMixin):
@@ -225,7 +229,6 @@ class RenterCreateView(CreateView, LoginRequiredMixin, RenterCreatePermissionMix
         return super().form_valid(form)
 
 
-
 class RenterListView(LoginRequiredMixin, RenterViewPermissionMixin, ListView):
     model = Renter
     template_name = "rent/list.html"
@@ -236,13 +239,10 @@ class RenterListView(LoginRequiredMixin, RenterViewPermissionMixin, ListView):
         context["open"] = "renter"
         context['obj_model'] = "renter"
 
-
         return {**context, **permissions(self.request)}
 
     def get_queryset(self):
         return Renter.objects.filter(is_rented=True)
-    
-
 
 
 class RenterDetailView(LoginRequiredMixin, RenterCreatePermissionMixin, DetailView):
@@ -259,7 +259,6 @@ class RenterDetailView(LoginRequiredMixin, RenterCreatePermissionMixin, DetailVi
         return {**context, **permissions(self.request)}
 
 
-
 class RenterUpdateView(LoginRequiredMixin, RenterUpdatePermissionMixin, UpdateView):
     login_required = True
     model = Renter
@@ -273,14 +272,12 @@ class RenterUpdateView(LoginRequiredMixin, RenterUpdatePermissionMixin, UpdateVi
         context["title"] = "Renter"
         context["card_header"] = "Update Renter"
         context["open"] = "renter"
-        
-        return {**context, **permissions(self.request)}
 
+        return {**context, **permissions(self.request)}
 
     def form_valid(self, form):
         messages.success(self.request, 'Renter Updated Successfully')
         form.instance.updated_by = self.request.user
-
 
         return super().form_valid(form)
 
@@ -300,12 +297,10 @@ class PaymentCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, Create
 
         return {**context, **permissions(self.request)}
 
-
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
         messages.success(self.request, 'Payment Registered Successfully')
-        
 
         return super().form_valid(form)
 
@@ -323,18 +318,14 @@ class PaymentUpdateView(LoginRequiredMixin, PaymentUpdatePermissionMixin, Update
         context["title"] = "Payment"
         context["card_header"] = "Update Payment"
         context["open"] = "payment"
-        
+
         return {**context, **permissions(self.request)}
-    
-    
+
     def form_valid(self, form):
         messages.success(self.request, 'Payment Updated Successfully')
         form.instance.updated_by = self.request.user
 
-
         return super().form_valid(form)
-
-
 
 
 class PaymentListView(LoginRequiredMixin, PaymentViewPermissionMixin, ListView):
@@ -348,6 +339,7 @@ class PaymentListView(LoginRequiredMixin, PaymentViewPermissionMixin, ListView):
         context['obj_model'] = "payment"
 
         return {**context, **permissions(self.request)}
+
 
 class PaymentDetailView(LoginRequiredMixin, PaymentViewPermissionMixin, DetailView):
     model = Payment
@@ -366,7 +358,7 @@ class PaymentDetailView(LoginRequiredMixin, PaymentViewPermissionMixin, DetailVi
 @login_required
 @permission_required(perm="rent.delete_renter")
 def RenterDeleteView(request, pk):
-    object = Renter.objects.get(id= pk)
+    object = Renter.objects.get(id=pk)
     if request.method == "POST":
         object.is_rented = False
         object.save()
@@ -377,10 +369,10 @@ def RenterDeleteView(request, pk):
             room.save()
 
         messages.success(request, message="Renter Deleted Sucessfully")
-        
+
         return redirect("list-renters")
 
-    context={
+    context = {
         "title": "Renter",
         "open": "renter",
         "obj_model": "renter",
@@ -394,21 +386,22 @@ def RenterDeleteView(request, pk):
 @login_required
 @permission_required(perm="rent.delete_room")
 def RoomDeleteView(request, pk):
-    object = Room.objects.get(id= pk)
-    if request.method== "POST":
+    object = Room.objects.get(id=pk)
+    if request.method == "POST":
         if object.status == "occupied":
-            messages.error(request, message="Room Can't be Deleted, you need to delete the rented attached to it")
+            messages.error(
+                request, message="Room Can't be Deleted, you need to delete the rented attached to it")
         else:
-            object.is_active=False
+            object.is_active = False
             object.save()
             messages.success(request, message="Room Deleted Sucessfully")
         return redirect("list-rooms")
 
-    context={
+    context = {
         "title": "Room",
         "open": "room",
         "obj_model": "room",
-        "object":object,
+        "object": object,
         **permissions(request)
     }
 
@@ -420,17 +413,14 @@ def RoomDeleteView(request, pk):
 def ReportMenuView(request):
     buildings = Building.objects.all()
 
-
-
-    context={
+    context = {
         "object_list": buildings,
         "title": "Reports",
         "open": "report",
-        "obj_model":"report",
+        "obj_model": "report",
         **permissions(request)
     }
-    return render(request, "rent/list-menu-reports.html", context )
-
+    return render(request, "rent/list-menu-reports.html", context)
 
 
 class RoomTypeCreateView(LoginRequiredMixin, RoomTypeCreatePermissionMixin, CreateView):
@@ -466,16 +456,15 @@ class RoomTypeUpdateView(LoginRequiredMixin, RoomTypeUpdatePermissionMixin, Upda
         context["title"] = "Room Type"
         context["card_header"] = "Update Room Type"
         context["open"] = "roomtype"
-        
-        return {**context, **permissions(self.request)}
 
+        return {**context, **permissions(self.request)}
 
     def form_valid(self, form):
         messages.success(self.request, 'Room Type Updated Successfully')
         form.instance.updated_by = self.request.user
 
-
         return super().form_valid(form)
+
 
 class RoomTypeListView(LoginRequiredMixin, RoomTypeViewPermissionMixin, ListView):
     model = RoomType
@@ -489,6 +478,7 @@ class RoomTypeListView(LoginRequiredMixin, RoomTypeViewPermissionMixin, ListView
 
         return {**context, **permissions(self.request)}
 
+
 class RoomTypeDeleteView(LoginRequiredMixin, RoomTypeDeletePermissionMixin, DeleteView):
     model = RoomType
     template_name = "rent/delete_page.html"
@@ -498,23 +488,22 @@ class RoomTypeDeleteView(LoginRequiredMixin, RoomTypeDeletePermissionMixin, Dele
         context = super().get_context_data(**kwargs)
         context["title"] = "Room Type"
         context["open"] = "roomtype"
-        context['obj_model'] = "roomtype" 
-        
-        
+        context['obj_model'] = "roomtype"
+
         return {**context, **permissions(self.request)}
 
     def form_valid(self, form):
-        for i in range(1000):
-            print("wow")
-        if self.get_object().room_set.all().count() == 0 :
+        if self.get_object().room_set.all().count() == 0:
             super().form_valid(self)
             messages.success(self.request, "Room Type Deleted successfully")
 
         else:
-            messages.error(self.request, "Room Type Cant Be Deleted. Make sure there are no rooms under this Room Type ")
-            
+            messages.error(
+                self.request, "Room Type Cant Be Deleted. Make sure there are no rooms under this Room Type ")
+
         return HttpResponseRedirect(self.success_url)
-        
+
+
 class PaymentDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, DeleteView):
     model = Payment
     template_name = "rent/delete_page.html"
@@ -524,11 +513,9 @@ class PaymentDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, Delete
         context = super().get_context_data(**kwargs)
         context["title"] = "Payment"
         context["open"] = "payment"
-        context['obj_model'] = "payment" 
-        
-        
-        return {**context, **permissions(self.request)}
+        context['obj_model'] = "payment"
 
+        return {**context, **permissions(self.request)}
 
 
 @login_required
@@ -538,37 +525,42 @@ def BuildingMonthlyReportListView(request, pk):
         fromdate = request.POST.get("fromdate")
         todate = request.POST.get("todate")
         reports = Payment.objects.filter(
-              paid_date__gte = fromdate, 
-              paid_date__lte = todate,
-              renter__room__building__id=pk
+            paid_date__gte=fromdate,
+            paid_date__lte=todate,
+            renter__room__building__id=pk
         )
-        total = reports.aggregate(Sum('amount')).get("amount__sum")
+        total_penality = reports.aggregate(Sum('penality')).get("penality__sum")
+        total_vat = reports.aggregate(Sum('vat')).get("vat__sum")
+        total_amount = reports.aggregate(Sum('amount')).get("amount__sum")
+        total = total_amount = total_penality + total_vat
         context = {
-        "object_list":reports,
-        "total":total,
-        "open":"report",
-        "title" :"Monthly Report",
-        'obj_model': 'report',
-        **permissions(request),
+            "object_list": reports,
+            "total": total,
+            "open": "report",
+            "title": "Monthly Report",
+            'obj_model': 'report',
+            **permissions(request),
         }
         return render(request, "rent/list-monthly-report.html", context)
     else:
         reports = Payment.objects.filter(
-                  renter__room__building__id=pk
+            renter__room__building__id=pk
         )
-        total = reports.aggregate(Sum('amount')).get("amount__sum")
+        total_penality = reports.aggregate(Sum('penality')).get("penality__sum")
+        total_vat = reports.aggregate(Sum('vat')).get("vat__sum")
+        total_amount = reports.aggregate(Sum('amount')).get("amount__sum")
+        total = total_amount + total_penality + total_vat
 
         context = {
-            "object_list":reports,
-            "total":total,
-            "open":"report",
-            "title" :"Monthly Report",
+            "object_list": reports,
+            "total": total,
+            "open": "report",
+            "title": "Monthly Report",
             'obj_model': 'report',
             **permissions(request),
         }
 
     return render(request, "rent/list-monthly-report.html", context)
-
 
 
 class ReportListView(LoginRequiredMixin, ReportViewPermissionMixin, ListView):
@@ -581,20 +573,19 @@ class ReportListView(LoginRequiredMixin, ReportViewPermissionMixin, ListView):
         context["open"] = "report"
         context['obj_model'] = "report"
 
-        return {**context, **permissions(self.request)} 
+        return {**context, **permissions(self.request)}
 
     def get_queryset(self):
-        querset = Report.objects.filter(renter__room__building__id=self.kwargs.get('pk'))
-        for object in querset.filter(renter__is_rented = True ):
-            object.save() # make this using crone jobs
+        querset = Report.objects.filter(
+            renter__room__building__id=self.kwargs.get('pk'))
+        for object in querset.filter(renter__is_rented=True):
+            object.save()  # make this using crone jobs
         return querset
-    
 
 
 class UserListView(LoginRequiredMixin, UserViewPermissionMixin, ListView):
     model = User
     template_name = "rent/list-user.html"
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -602,10 +593,10 @@ class UserListView(LoginRequiredMixin, UserViewPermissionMixin, ListView):
         context["open"] = "user"
         context['obj_model'] = "user"
 
-        return {**context, **permissions(self.request)} 
+        return {**context, **permissions(self.request)}
 
 
-class UserCreateView(LoginRequiredMixin,UserCreatePermissionMixin, CreateView):
+class UserCreateView(LoginRequiredMixin, UserCreatePermissionMixin, CreateView):
     model = User
     template_name = "rent/register.html"
     form_class = UserRegistrationForm
@@ -619,16 +610,14 @@ class UserCreateView(LoginRequiredMixin,UserCreatePermissionMixin, CreateView):
         context["card_header"] = "Register User"
         context['obj_model'] = "user"
 
-        return {**context, **permissions(self.request)} 
+        return {**context, **permissions(self.request)}
 
 
-
-class UserUpdateView(LoginRequiredMixin,UserUpdatePermissionMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin, UserUpdatePermissionMixin, UpdateView):
     model = User
     form_class = UpdateUserForm
     template_name = "rent/register.html"
     success_url = reverse_lazy("list-users")
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -637,8 +626,7 @@ class UserUpdateView(LoginRequiredMixin,UserUpdatePermissionMixin, UpdateView):
         context["card_header"] = "Update User"
         context['obj_model'] = "user"
 
-        return {**context, **permissions(self.request)} 
-
+        return {**context, **permissions(self.request)}
 
 
 class UserAdditionalInfoUpdateView(LoginRequiredMixin, UserUpdatePermissionMixin, UpdateView):
@@ -653,9 +641,9 @@ class UserAdditionalInfoUpdateView(LoginRequiredMixin, UserUpdatePermissionMixin
         return {**context, **permissions(self.request)}
 
     def get_object(self, queryset=None):
-        
+
         queryset = User.objects.all()
-        
+
         pk = self.kwargs.get(self.pk_url_kwarg)
 
         if pk is not None:
@@ -669,9 +657,8 @@ class UserAdditionalInfoUpdateView(LoginRequiredMixin, UserUpdatePermissionMixin
 
         obj = queryset.get().useradditionalinfo
         return obj
-        
 
-        
+
 @login_required
 def ChangeSecurity(request):
     security = UserAdditionalInfo.objects.get(user=request.user)
@@ -683,7 +670,7 @@ def ChangeSecurity(request):
     if request.method == "POST":
         security_question = request.POST.get("security_question")
         security_answer = request.POST.get("security_answer")
-        
+
         security.security_question = security_question
         security.security_answer = security_answer
 
@@ -692,11 +679,10 @@ def ChangeSecurity(request):
         del(request.session['confirmed'])
 
         return redirect("home")
-    
-    
-    context={
-        "security_answer" : security.security_answer,
-        "security_question" : security.security_question,
+
+    context = {
+        "security_answer": security.security_answer,
+        "security_question": security.security_question,
     }
     return render(request, "authentication/change-security.html", context)
 
@@ -710,16 +696,13 @@ def CheckPassword(request):
         else:
             request.session["confirmed"] = True
             return redirect("change-security")
-    
+
     return render(request, "authentication/check-password.html")
-
-
 
 
 class UserDetailView(LoginRequiredMixin, UserViewPermissionMixin, DetailView):
     model = User
     template_name = "rent/user-detail.html"
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -727,7 +710,7 @@ class UserDetailView(LoginRequiredMixin, UserViewPermissionMixin, DetailView):
         context["open"] = "userdetail"
         context['obj_model'] = "user"
 
-        return {**context, **permissions(self.request)} 
+        return {**context, **permissions(self.request)}
 
 
 @login_required
@@ -741,6 +724,7 @@ def UserDetail(request):
     }
 
     return render(request, "rent/user-detail.html", context)
+
 
 @login_required
 def EditUserData(request):
@@ -770,8 +754,9 @@ def EditUserData(request):
 
     return render(request, "authentication/change-user-info.html", context)
 
+
 @login_required
-@permission_required(perm = "rent.view_payment", raise_exception=True)
+@permission_required(perm="rent.view_payment", raise_exception=True)
 def OverDuePaymentListView(request):
     if request.method == 'POST':
         if "selected_id" in request.POST:
@@ -779,9 +764,11 @@ def OverDuePaymentListView(request):
             if request.POST["selected_id"]:
                 for selected in request.POST.getlist("selected_id"):
                     var = []
-                    var.append(Report.objects.get(id = selected).renter.full_name())
-                    var.append(Report.objects.get(id = selected).renter.chat_id)
-                    var.append(float(Report.objects.get(id = selected).outstanding_balance))
+                    var.append(Report.objects.get(
+                        id=selected).renter.full_name())
+                    var.append(Report.objects.get(id=selected).renter.chat_id)
+                    var.append(float(Report.objects.get(
+                        id=selected).outstanding_balance))
                     due.append(var)
 
             for info in due:
@@ -792,19 +779,17 @@ def OverDuePaymentListView(request):
             messages.error(request, "You have to select at least one.")
     reports = Report.objects.all()
     over_due = []
-    for report in reports :
-        if report.outstanding_balance >  0 :
-            over_due.append(report)  
-
-
+    for report in reports:
+        if report.outstanding_balance > 0:
+            over_due.append(report)
 
     context = {
-            "object_list": over_due,
-            "open":"overdue",
-            "title" :"Over Due Payments",
-            'obj_model': 'over due',
-            **permissions(request),
-        }
+        "object_list": over_due,
+        "open": "overdue",
+        "title": "Over Due Payments",
+        'obj_model': 'over due',
+        **permissions(request),
+    }
     return render(request, "rent/over-due-list.html", context)
 
 
@@ -812,17 +797,13 @@ class BuildingListView(LoginRequiredMixin, BuildingViewPermissionMixin, ListView
     model = Building
     template_name = "rent/building-list.html"
 
-
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Building"
         context["open"] = "building"
         context['obj_model'] = "building"
-        
-        
-        return {**context, **permissions(self.request)}
 
+        return {**context, **permissions(self.request)}
 
 
 class BuildingCreateView(LoginRequiredMixin, BuildingCreatePermissionMixin, CreateView):
@@ -861,7 +842,6 @@ class BuildingUpdateView(LoginRequiredMixin, BuildingUpdatePermissionMixin, Upda
 
         return {**context, **permissions(self.request)}
 
-
     def form_valid(self, form):
         messages.success(self.request, 'Building Updated Successfully')
         return super().form_valid(form)
@@ -871,91 +851,84 @@ class BuildingDeleteView(LoginRequiredMixin, BuildingDeletePermissionMixin, Dele
     model = Building
     success_url = reverse_lazy('list-buildings')
     template_name = "rent/delete_page.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Building"
         context["open"] = "building"
-        context['obj_model'] = "building" 
-        
-        
+        context['obj_model'] = "building"
+
         return {**context, **permissions(self.request)}
 
-
     def form_valid(self, form):
-        if self.get_object().room_set.all().count() == 0 :
+        if self.get_object().room_set.all().count() == 0:
             super().form_valid(self)
             messages.success(self.request, "Building Deleted successfully")
 
         else:
-            messages.error(self.request, "Building Cant Be Deleted. Make sure there are no rooms under this Building ")
-            
+            messages.error(
+                self.request, "Building Cant Be Deleted. Make sure there are no rooms under this Building ")
+
         return HttpResponseRedirect(self.success_url)
-        
 
 
 @login_required
-@permission_required(perm = "rent.view_report")
+@permission_required(perm="rent.view_report")
 def RoomPrice(request, pk):
-    renter = Renter.objects.get(id = pk)
+    renter = Renter.objects.get(id=pk)
 
     room_price = renter.room.total_price
 
-    return JsonResponse({"price":room_price})
+    return JsonResponse({"price": room_price})
 
 
 @login_required
-@permission_required(perm = "rent.view_report")
+@permission_required(perm="rent.view_report")
 def RoomPenality(request, pk):
-    renter = Report.objects.get(id = pk)
+    renter = Report.objects.get(id=pk)
 
     room_penality = renter.penality
 
-    return JsonResponse({"penality":room_penality})
+    return JsonResponse({"penality": room_penality})
 
 
 @login_required
-@permission_required(perm = "rent.view_report")
+@permission_required(perm="rent.view_report")
 def PaymentVat(request):
     payment_vat = Vat.objects.get()
 
     vat = payment_vat.vat_percent / 100
 
-    
-    return JsonResponse({"vat":vat})
-
-
+    return JsonResponse({"vat": vat})
 
 
 @login_required
-@permission_required(perm = "rent.view_roomtype")
+@permission_required(perm="rent.view_roomtype")
 def RoomReport(request, pk):
     Rooms = RoomType.objects.all()
 
-
     context = {
-        "room_types":[],
-        "open":"report",
-        "title" :"Room Report",
+        "room_types": [],
+        "open": "report",
+        "title": "Room Report",
         'obj_model': 'report',
         **permissions(request),
     }
-    
-    for vacant in Rooms :
-        vacant_rooms = vacant.room_set.filter(status = 'vacant', building__id=pk).count()
+
+    for vacant in Rooms:
+        vacant_rooms = vacant.room_set.filter(
+            status='vacant', building__id=pk).count()
 
         total_rooms = vacant.room_set.filter(building__id=pk).count()
-        data  = {
-            'roomtype' : vacant.room_type,
+        data = {
+            'roomtype': vacant.room_type,
             'vacant_rooms': vacant_rooms,
             'total_rooms': total_rooms
         }
         context['room_types'].append(data)
-    print(context)    
-    
+    print(context)
 
     return render(request, "rent/room-report.html", context)
-
 
 
 class PenalityListView(LoginRequiredMixin, PaymentViewPermissionMixin, ListView):
@@ -968,7 +941,7 @@ class PenalityListView(LoginRequiredMixin, PaymentViewPermissionMixin, ListView)
         context["open"] = "penality"
         context['obj_model'] = "report"
 
-        return {**context, **permissions(self.request)} 
+        return {**context, **permissions(self.request)}
 
 
 class PenalityDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, DeleteView):
@@ -980,11 +953,9 @@ class PenalityDeleteView(LoginRequiredMixin, PaymentDeletePermissionMixin, Delet
         context = super().get_context_data(**kwargs)
         context["title"] = "Penality"
         context["open"] = "penality"
-        context['obj_model'] = "penality" 
-        
-        
-        return {**context, **permissions(self.request)}
+        context['obj_model'] = "penality"
 
+        return {**context, **permissions(self.request)}
 
 
 class PenalityUpdateView(LoginRequiredMixin, PaymentUpdatePermissionMixin, UpdateView):
@@ -1001,9 +972,7 @@ class PenalityUpdateView(LoginRequiredMixin, PaymentUpdatePermissionMixin, Updat
         context["card_header"] = "Update Penality"
         context["open"] = "penality"
 
-
         return {**context, **permissions(self.request)}
-
 
 
 class PenalityCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, CreateView):
@@ -1022,17 +991,22 @@ class PenalityCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, Creat
         return {**context, **permissions(self.request)}
 
 
-class VatCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, CreateView):
+class VatUpdateView(LoginRequiredMixin, PaymentUpdatePermissionMixin, UpdateView):
     form_class = RegisterVatForm
-    success_url = reverse_lazy('list-penality')
+    success_url = reverse_lazy('list-Payment')
     context_object_name = 'form'
     template_name = 'rent/register.html'
+
+    def get_queryset(self):
+        vats = Vat.objects.get(id=1)
+
+        return vats
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["tab_name"] = "Register"
         context["title"] = "VAT"
         context["card_header"] = "VAT"
-        context["open"] = "penality"
+        context["open"] = "payment"
 
         return {**context, **permissions(self.request)}
