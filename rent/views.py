@@ -873,7 +873,7 @@ class BuildingDeleteView(LoginRequiredMixin, BuildingDeletePermissionMixin, Dele
 
 
 @login_required
-@permission_required(perm="rent.view_report")
+@permission_required(perm="rent.view_payment")
 def RoomPrice(request, pk):
     renter = Renter.objects.get(id=pk)
 
@@ -883,7 +883,7 @@ def RoomPrice(request, pk):
 
 
 @login_required
-@permission_required(perm="rent.view_report")
+@permission_required(perm="rent.view_payment")
 def RoomPenality(request, pk):
     renter = Report.objects.get(id=pk)
 
@@ -893,9 +893,9 @@ def RoomPenality(request, pk):
 
 
 @login_required
-@permission_required(perm="rent.view_report")
+@permission_required(perm="rent.view_payment")
 def PaymentVat(request):
-    payment_vat = Vat.objects.get()
+    payment_vat = get_object_or_404(Vat)
 
     vat = payment_vat.vat_percent / 100
 
@@ -991,22 +991,3 @@ class PenalityCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, Creat
         return {**context, **permissions(self.request)}
 
 
-class VatUpdateView(LoginRequiredMixin, PaymentUpdatePermissionMixin, UpdateView):
-    form_class = RegisterVatForm
-    success_url = reverse_lazy('list-Payment')
-    context_object_name = 'form'
-    template_name = 'rent/register.html'
-
-    def get_queryset(self):
-        vats = Vat.objects.get(id=1)
-
-        return vats
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["tab_name"] = "Register"
-        context["title"] = "VAT"
-        context["card_header"] = "VAT"
-        context["open"] = "payment"
-
-        return {**context, **permissions(self.request)}

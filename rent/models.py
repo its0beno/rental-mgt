@@ -221,14 +221,16 @@ class Report(models.Model):
         amount = self.payment_set.all().aggregate(Sum('amount'))
         vat = self.payment_set.all().aggregate(Sum('vat'))
         penality = self.payment_set.all().aggregate(Sum('penality'))
+        
+        
+        sum = amount.get('amount__sum') + vat.get('vat__sum') + penality.get('penality__sum') 
 
         if amount.get('amount__sum') is None:
             return Decimal(0)
 
-        sum = amount.get('amount__sum') + vat.get('vat__sum') + \
-            penality.get('penality__sum') + self.renter.deposited_amount
+        total = sum + self.renter.deposited_amount
 
-        return sum
+        return total
 
     @property
     def room_no(self) -> str:

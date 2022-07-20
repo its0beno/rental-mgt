@@ -76,5 +76,4 @@ urlpatterns = [
     path("list-penality/", views.PenalityListView.as_view(), name="list-penality"),
     path("register-penality/", views.PenalityCreateView.as_view(),
          name="register-penality"),
-    path("update-vat/<int:pk>/", views.VatUpdateView.as_view(), name="update-vat"),
 ]
