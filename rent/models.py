@@ -1,6 +1,3 @@
-from email.policy import default
-from pyexpat import model
-from turtle import pen
 from django.db.models import Sum
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta as rel
