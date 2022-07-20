@@ -76,14 +76,20 @@ def dashboard_page(request):
     this_month_amount = this_month.aggregate(Sum('amount')).get("amount__sum")
     this_month_vat = this_month.aggregate(Sum('vat')).get("vat__sum")
     this_month_penality = this_month.aggregate(Sum('penality')).get("penality__sum")
-    amount_collected_this_month = this_month_amount + this_month_penality + this_month_vat
+    if this_month_amount is None:
+        amount_collected_this_month = 0
+    else:
+        amount_collected_this_month = this_month_amount + this_month_penality + this_month_vat
 
 
     this_year = payments.filter(updated_date__year=timezone.now().year)
     this_year_amount = this_year.aggregate(Sum('amount')).get("amount__sum")
     this_year_penality = this_year.aggregate(Sum('penality')).get("penality__sum")
     this_year_vat = this_year.aggregate(Sum('vat')).get("vat__sum")
-    this_year_balance = this_month_amount + this_month_penality + this_month_vat
+    if this_year_amount is None:
+       this_year_balance = 0
+    else:
+        this_year_balance = this_month_amount + this_month_penality + this_month_vat
     # Over Due Payments
     free_rooms = Room.objects.filter(status="vacant").count()
     used_rooms = Room.objects.filter(status="occupied").count()
