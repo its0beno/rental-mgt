@@ -73,8 +73,10 @@
 
         amountField.on("keyup", ()=>{
           vatField.val(vat  * parseInt(amountField.val()));
+          monthField.val(parseInt(amountField.val()) / price)
         })
         
+
     });
 </script>
 {% endblock scripts %}

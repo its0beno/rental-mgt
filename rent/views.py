@@ -996,3 +996,18 @@ class PenalityCreateView(LoginRequiredMixin, PaymentCreatePermissionMixin, Creat
         return {**context, **permissions(self.request)}
 
 
+class VatUpdateView(UpdateView):
+    login_required = True
+    model = Vat
+    form_class = RegisterVatForm
+    context_object_name = "form"
+    success_url = reverse_lazy("list-payment")
+    template_name = "rent/register.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Vat"
+        context["card_header"] = "Update Vat"
+        context["open"] = "payment"
+
+        return {**context, **permissions(self.request)}
