@@ -67,29 +67,30 @@ def dashboard_page(request):
     payments = Payment.objects.all()
 
     rooms_rented_this_month = renters.filter(is_rented=True).filter(
-        updated_date__year=timezone.now().year, 
+        updated_date__year=timezone.now().year,
         updated_date__month=timezone.now().month).count()
 
-    
-    this_month = payments.filter(paid_date__year=timezone.now().year, 
-    paid_date__month=timezone.now().month)
+    this_month = payments.filter(paid_date__year=timezone.now().year,
+                                 paid_date__month=timezone.now().month)
     this_month_amount = this_month.aggregate(Sum('amount')).get("amount__sum")
     this_month_vat = this_month.aggregate(Sum('vat')).get("vat__sum")
-    this_month_penality = this_month.aggregate(Sum('penality')).get("penality__sum")
+    this_month_penality = this_month.aggregate(
+        Sum('penality')).get("penality__sum")
     if this_month_amount is None:
         amount_collected_this_month = 0
     else:
-        amount_collected_this_month = this_month_amount + this_month_penality + this_month_vat
-
+        amount_collected_this_month = this_month_amount + \
+            this_month_penality + this_month_vat
 
     this_year = payments.filter(updated_date__year=timezone.now().year)
     this_year_amount = this_year.aggregate(Sum('amount')).get("amount__sum")
-    this_year_penality = this_year.aggregate(Sum('penality')).get("penality__sum")
+    this_year_penality = this_year.aggregate(
+        Sum('penality')).get("penality__sum")
     this_year_vat = this_year.aggregate(Sum('vat')).get("vat__sum")
     if this_year_amount is None:
-       this_year_balance = 0
+        this_year_balance = 0
     else:
-        this_year_balance = this_month_amount + this_month_penality + this_month_vat
+        this_year_balance = this_year_amount + this_year_penality + this_year_vat
     # Over Due Payments
     free_rooms = Room.objects.filter(status="vacant").count()
     used_rooms = Room.objects.filter(status="occupied").count()
@@ -107,8 +108,8 @@ def dashboard_page(request):
         "renters": renters,
         "payments": payments,
         "rooms_rented_this_month": rooms_rented_this_month,
-        "amount_collected_this_month": amount_collected_this_month,
-        "this_year_balance": this_year_balance,
+        "amount_collected_this_month": round(amount_collected_this_month, 2),
+        "this_year_balance": round(this_year_balance, 2),
         "over_due_payments": over_due_payment,
         "free_rooms": free_rooms,
         "title": "Dashboard",
@@ -534,13 +535,17 @@ def BuildingMonthlyReportListView(request, pk):
             paid_date__lte=todate,
             renter__room__building__id=pk
         )
-        total_penality = reports.aggregate(Sum('penality')).get("penality__sum")
+        total_penality = reports.aggregate(
+            Sum('penality')).get("penality__sum")
         total_vat = reports.aggregate(Sum('vat')).get("vat__sum")
         total_amount = reports.aggregate(Sum('amount')).get("amount__sum")
-        total = total_amount = total_penality + total_vat
+        if total_penality is None:
+            total = 0
+        else:
+            total = total_amount = total_penality + total_vat
         context = {
             "object_list": reports,
-            "total": total,
+            "total": round(total, 2),
             "open": "report",
             "title": "Monthly Report",
             'obj_model': 'report',
@@ -551,14 +556,18 @@ def BuildingMonthlyReportListView(request, pk):
         reports = Payment.objects.filter(
             renter__room__building__id=pk
         )
-        total_penality = reports.aggregate(Sum('penality')).get("penality__sum")
+        total_penality = reports.aggregate(
+            Sum('penality')).get("penality__sum")
         total_vat = reports.aggregate(Sum('vat')).get("vat__sum")
         total_amount = reports.aggregate(Sum('amount')).get("amount__sum")
-        total = total_amount + total_penality + total_vat
+        if total_amount is None:
+            total = 0
+        else:
+            total = total_amount + total_penality + total_vat
 
         context = {
             "object_list": reports,
-            "total": total,
+            "total": round(total,2),
             "open": "report",
             "title": "Monthly Report",
             'obj_model': 'report',
@@ -681,7 +690,7 @@ def ChangeSecurity(request):
 
         security.save()
 
-        del(request.session['confirmed'])
+        del (request.session['confirmed'])
 
         return redirect("home")
 
