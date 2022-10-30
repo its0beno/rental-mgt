@@ -32,7 +32,9 @@
                             <tr>
                                 <th>#</th>
                                 <th>Full Name</th>
+                                <th>Company Name</th>
                                 <th>Phone Number</th>
+                                <th>Tin Number</th>
                                 <th>Room No.</th>
                                 <th>Action</th>
                             </tr>
@@ -64,7 +66,9 @@
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ data.full_name }}</td>
+                                <td>{{ data.company_name }}</td>
                                 <td>{{ data.phone }}</td>        
+                                <td>{{ data.tin_no }}</td>        
                                 <td >{{data.room}}</td>
                                 
                                 <td class="product-action d-flex"><a class="btn btn-primary btn-sm mr-3" href="{% url 'detail-renter' pk=data.id %}">

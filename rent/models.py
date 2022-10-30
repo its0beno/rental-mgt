@@ -1,3 +1,5 @@
+from email.policy import default
+from unittest.util import _MAX_LENGTH
 from django.db.models import Sum
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta as rel
@@ -87,14 +89,16 @@ class Renter(models.Model):
     # Fields.
     first_name = models.CharField(_("First Name"), max_length=30)
     last_name = models.CharField(_("Last Name"), max_length=30)
-    phone = models.CharField(_("Phone number"), max_length=30)
-    id_no = models.CharField(_("ID No."), max_length=50)
+    phone = models.IntegerField(_("Phone number"), )
+    tin_no = models.IntegerField(_("Tin number"), )
+    company_name = models.CharField(
+        _("Compane Name"), max_length=50,)
     deposited_amount = models.DecimalField(
         _("Deposited Amount"), max_digits=15, decimal_places=2, default=0)
     date_admitted = models.DateField(_("Date Admitted"), default=timezone.now)
     room = models.ForeignKey("rent.Room", verbose_name=_(
         "Room"), on_delete=models.PROTECT, related_name="rents")
-    chat_id = models.CharField(_("Chat ID"), max_length=50, default=0)
+    chat_id = models.IntegerField(_("Chat ID"),)
 
     # Boolean that tells if the renter is renting.
     is_rented = models.BooleanField(_("Is Rented"), default=True)
@@ -218,14 +222,13 @@ class Report(models.Model):
         amount = self.payment_set.all().aggregate(Sum('amount'))
         vat = self.payment_set.all().aggregate(Sum('vat'))
         penality = self.payment_set.all().aggregate(Sum('penality'))
-        
-
 
         if amount.get('amount__sum') is None:
             return Decimal(0)
 
-        sum = amount.get('amount__sum') + vat.get('vat__sum') + penality.get('penality__sum') 
-        
+        sum = amount.get('amount__sum') + vat.get('vat__sum') + \
+            penality.get('penality__sum')
+
         total = sum + self.renter.deposited_amount
 
         return total

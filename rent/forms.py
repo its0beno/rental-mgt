@@ -26,15 +26,18 @@ class RegisterRoomForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
-    width = forms.DecimalField(min_value=0.00, decimal_places=2, required=False, label="Room Width")
-    length = forms.DecimalField(min_value=0.00, decimal_places=2, required=False, label="Room Length")
-    class Meta :
+    width = forms.DecimalField(
+        min_value=0.00, decimal_places=2, required=False, label="Room Width")
+    length = forms.DecimalField(
+        min_value=0.00, decimal_places=2, required=False, label="Room Length")
+
+    class Meta:
         model = Room
         fields = [
             "building",
             "floor_no",
             "room_type",
-            "room_no", 
+            "room_no",
             "width",
             "length",
             "price_msq",
@@ -42,13 +45,7 @@ class RegisterRoomForm(forms.ModelForm):
         ]
 
 
-    
-
-
-  
-
 class RegisterRenterForm(forms.ModelForm):
-
 
     def __init__(self, *args, **kwargs) -> None:
         super(RegisterRenterForm, self).__init__(*args, **kwargs)
@@ -58,28 +55,31 @@ class RegisterRenterForm(forms.ModelForm):
         if not kwargs["instance"]:
             self.fields['room'].queryset = Room.objects.filter(status="vacant")
         else:
-            self.fields["room"].queryset = Room.objects.exclude(status="under maintenance").exclude(status='not for rent')
+            self.fields["room"].queryset = Room.objects.exclude(
+                status="under maintenance").exclude(status='not for rent')
 
-
-    class Meta :
+    class Meta:
         model = Renter
         fields = [
             "first_name",
-            "last_name", 
+            "last_name",
             "phone",
+            "company_name",
+            "tin_no",
             "room",
             "chat_id",
-            "deposited_amount", 
+            "deposited_amount",
             "date_admitted"
         ]
 
     def clean_room(self):
         old_room = None
         try:
-            old_room = Room.objects.get(id=self.get_initial_for_field(self.fields['room'], 'room'))
+            old_room = Room.objects.get(
+                id=self.get_initial_for_field(self.fields['room'], 'room'))
         except:
             pass
-        
+
         new_room = self.cleaned_data['room']
         if old_room and new_room != old_room:
             if not new_room.rents.filter(is_rented=False) or new_room.status == 'occupied':
@@ -92,7 +92,8 @@ class RegisterRenterForm(forms.ModelForm):
     def save(self):
         room = None
         try:
-            room = Room.objects.get(id=self.get_initial_for_field(self.fields['room'], 'room'))
+            room = Room.objects.get(
+                id=self.get_initial_for_field(self.fields['room'], 'room'))
         except Room.DoesNotExist:
             pass
         new_room = self.cleaned_data['room']
@@ -101,10 +102,7 @@ class RegisterRenterForm(forms.ModelForm):
                 room.status = "vacant"
                 room.save()
         return super().save()
-        
 
-
- 
 
 class RegisterPaymentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs) -> None:
@@ -112,7 +110,7 @@ class RegisterPaymentForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
-    class Meta :
+    class Meta:
         model = Payment
         fields = [
             "renter",
@@ -124,7 +122,7 @@ class RegisterPaymentForm(forms.ModelForm):
             "slip_no",
             "payment_method",
             "remark",
-            
+
         ]
 
 
@@ -132,19 +130,19 @@ class RegisterRoomTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RegisterRoomTypeForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class']= 'form-control'
+            field.widget.attrs['class'] = 'form-control'
 
-    
     class Meta:
         model = RoomType
-        fields = ["room_type"]    
+        fields = ["room_type"]
 
-        
 
 class UserRegistrationForm(UserCreationForm):
 
-    security_question = forms.CharField(label="Security Question", max_length=100, required=False)
-    security_answer = forms.CharField(label="Security Answer", max_length=100, required=False)
+    security_question = forms.CharField(
+        label="Security Question", max_length=100, required=False)
+    security_answer = forms.CharField(
+        label="Security Answer", max_length=100, required=False)
 
     class Meta:
         model = User
@@ -157,18 +155,19 @@ class UserRegistrationForm(UserCreationForm):
             self.fields[self._meta.model.USERNAME_FIELD].widget.attrs['autofocus'] = True
 
         for field_name, field in self.fields.items():
-            field.widget.attrs['class']= 'form-control'
+            field.widget.attrs['class'] = 'form-control'
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
-            user.groups.add(*self.cleaned_data['groups'])  
+            user.groups.add(*self.cleaned_data['groups'])
             user.save()
-            user_additional_info = UserAdditionalInfo(security_question = self.cleaned_data["security_question"], security_answer = self.cleaned_data['security_answer'], user=user)
+            user_additional_info = UserAdditionalInfo(
+                security_question=self.cleaned_data["security_question"], security_answer=self.cleaned_data['security_answer'], user=user)
             user_additional_info.save()
-        
+
         return user
 
 
@@ -177,7 +176,6 @@ class UpdateUserForm(forms.ModelForm):
         model = User
         fields = ("username", "first_name", "last_name", "email", "groups")
         field_classes = {"username": UsernameField}
-        
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -185,37 +183,34 @@ class UpdateUserForm(forms.ModelForm):
             self.fields[self._meta.model.USERNAME_FIELD].widget.attrs['autofocus'] = True
 
         for field_name, field in self.fields.items():
-            field.widget.attrs['class']= 'form-control'
-
+            field.widget.attrs['class'] = 'form-control'
 
     def save(self, commit=True):
         user = super().save(commit=False)
         if commit:
             user.save()
-            user.groups.add(*self.cleaned_data['groups'])  
+            user.groups.add(*self.cleaned_data['groups'])
             user.save()
-        
+
         return user
+
 
 class UserAdditionalInfoForm(forms.ModelForm):
     class Meta:
-        model= UserAdditionalInfo
-        fields= [
+        model = UserAdditionalInfo
+        fields = [
             "security_question",
             "security_answer",
         ]
 
 
-
 class RenterLeavesRoomForm(forms.ModelForm):
     class Meta:
         model = Renter
-        fields= ['is_rented']
-
+        fields = ['is_rented']
 
 
 class UpdateRenterForm(forms.ModelForm):
-
 
     def __init__(self, *args, **kwargs) -> None:
         super(UpdateRenterForm, self).__init__(*args, **kwargs)
@@ -225,14 +220,14 @@ class UpdateRenterForm(forms.ModelForm):
         if not kwargs["instance"]:
             self.fields['room'].queryset = Room.objects.filter(status="vacant")
         else:
-            self.fields["room"].queryset = Room.objects.exclude(status="under maintenance").exclude(status='not for rent')
+            self.fields["room"].queryset = Room.objects.exclude(
+                status="under maintenance").exclude(status='not for rent')
 
-
-    class Meta :
+    class Meta:
         model = Renter
         fields = [
             "first_name",
-            "last_name", 
+            "last_name",
             "phone",
             "room",
             "chat_id",
@@ -244,10 +239,11 @@ class UpdateRenterForm(forms.ModelForm):
     def clean_room(self):
         old_room = None
         try:
-            old_room = Room.objects.get(id=self.get_initial_for_field(self.fields['room'], 'room'))
+            old_room = Room.objects.get(
+                id=self.get_initial_for_field(self.fields['room'], 'room'))
         except:
             pass
-        
+
         new_room = self.cleaned_data['room']
         if old_room and new_room != old_room:
             if not new_room.rents.filter(is_rented=False) or new_room.status == 'occupied':
@@ -260,7 +256,8 @@ class UpdateRenterForm(forms.ModelForm):
     def save(self):
         room = None
         try:
-            room = Room.objects.get(id=self.get_initial_for_field(self.fields['room'], 'room'))
+            room = Room.objects.get(
+                id=self.get_initial_for_field(self.fields['room'], 'room'))
         except Room.DoesNotExist:
             pass
         if room:
@@ -275,12 +272,12 @@ class RegisterBuildingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RegisterBuildingForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class']= 'form-control'
+            field.widget.attrs['class'] = 'form-control'
 
-    class Meta :
+    class Meta:
         model = Building
         fields = [
-            "name", 
+            "name",
             "address",
         ]
 
@@ -290,12 +287,12 @@ class RegisterPenalityForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RegisterPenalityForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class']= 'form-control'
+            field.widget.attrs['class'] = 'form-control'
 
-    class Meta :
+    class Meta:
         model = Penality
         fields = [
-            "date_from", 
+            "date_from",
             "date_to",
             "penality_fee_percent",
         ]
@@ -306,11 +303,10 @@ class RegisterVatForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RegisterVatForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class']= 'form-control'
+            field.widget.attrs['class'] = 'form-control'
 
-    class Meta :
+    class Meta:
         model = Vat
         fields = [
             "vat_percent",
         ]
-      
