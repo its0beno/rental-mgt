@@ -41,7 +41,8 @@ class RegisterRoomForm(forms.ModelForm):
             "width",
             "length",
             "price_msq",
-            "status"
+            "status",
+            "room_img"
         ]
 
 
@@ -69,7 +70,8 @@ class RegisterRenterForm(forms.ModelForm):
             "room",
             "chat_id",
             "deposited_amount",
-            "date_admitted"
+            "date_admitted",
+            "license_img"
         ]
 
     def clean_room(self):
@@ -279,6 +281,7 @@ class RegisterBuildingForm(forms.ModelForm):
         fields = [
             "name",
             "address",
+            "img"
         ]
 
 

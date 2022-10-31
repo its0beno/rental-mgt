@@ -28,6 +28,7 @@ PAYMENT_METHOD_CHOICES = [
 class Building(models.Model):
     name = models.CharField(_("Name"), max_length=100)
     address = models.CharField(_("Address"), max_length=150)
+    img = models.ImageField(_("Building Image"), null= True, blank=True ,upload_to="img/")
 
     def __str__(self):
         return self.name
@@ -51,6 +52,8 @@ class Room(models.Model):
         _("Status"), max_length=50, choices=STATUS_CHOICES, default="vacant")
     total_price = models.DecimalField(
         _("Total Price"), max_digits=10, decimal_places=2)
+     
+    room_img = models.ImageField(_("Room Image"), null=True, upload_to="img/", blank=True)
 
     # Tells if the object is active or not.
     is_active = models.BooleanField(default=True)
@@ -92,14 +95,15 @@ class Renter(models.Model):
     phone = models.IntegerField(_("Phone number"), )
     tin_no = models.IntegerField(_("Tin number"), )
     company_name = models.CharField(
-        _("Compane Name"), max_length=50,)
+        _("Company Name"), max_length=50,)
     deposited_amount = models.DecimalField(
         _("Deposited Amount"), max_digits=15, decimal_places=2, default=0)
     date_admitted = models.DateField(_("Date Admitted"), default=timezone.now)
     room = models.ForeignKey("rent.Room", verbose_name=_(
         "Room"), on_delete=models.PROTECT, related_name="rents")
-    chat_id = models.IntegerField(_("Chat ID"),)
-
+    chat_id = models.IntegerField(_("Chat ID"),blank=True, null= True)
+    license_img = models.ImageField(_("Company Licence"), upload_to="img/",null=True, blank=True)
+    tin_img = models.ImageField(_("Tin Certificate"), upload_to="img/",null=True, blank=True)
     # Boolean that tells if the renter is renting.
     is_rented = models.BooleanField(_("Is Rented"), default=True)
     date_left = models.DateField(_("Date Field"), blank=True, null=True)
@@ -151,7 +155,7 @@ class Payment(models.Model):
     remark = models.TextField(_("Remark"), blank=True, default="No Remark.")
     vat = models.DecimalField(_("VAT Amount"), max_digits=10, decimal_places=2)
     penality = models.DecimalField(
-        _("Penality Amount"), max_digits=10, decimal_places=2)
+        _("Penality Amount"), max_digits=10, decimal_places=2, null=True , blank=True)
 
     # Reports
     report = models.ForeignKey("rent.Report", verbose_name=_(

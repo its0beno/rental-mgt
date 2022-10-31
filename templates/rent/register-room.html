@@ -12,7 +12,7 @@
         
         <div class="card-body">
 
-          <form class="form" method="POST">
+          <form class="form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}            
                 {{form.errors}}
                 <div class="form-group w-75 ml-auto mr-auto">
