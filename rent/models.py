@@ -89,8 +89,6 @@ class Renter(models.Model):
     last_name = models.CharField(_("Last Name"), max_length=30)
     phone = models.CharField(_("Phone number"), max_length=30)
     id_no = models.CharField(_("ID No."), max_length=50)
-    deposited_amount = models.DecimalField(
-        _("Deposited Amount"), max_digits=15, decimal_places=2, default=0)
     date_admitted = models.DateField(_("Date Admitted"), default=timezone.now)
     room = models.ForeignKey("rent.Room", verbose_name=_(
         "Room"), on_delete=models.PROTECT, related_name="rents")
@@ -226,9 +224,9 @@ class Report(models.Model):
 
         sum = amount.get('amount__sum') + vat.get('vat__sum') + penality.get('penality__sum') 
         
-        total = sum + self.renter.deposited_amount
+      
 
-        return total
+        return sum
 
     @property
     def room_no(self) -> str:

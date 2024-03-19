@@ -69,7 +69,6 @@ class RegisterRenterForm(forms.ModelForm):
             "phone",
             "room",
             "chat_id",
-            "deposited_amount", 
             "date_admitted"
         ]
 
@@ -236,7 +235,6 @@ class UpdateRenterForm(forms.ModelForm):
             "phone",
             "room",
             "chat_id",
-            "deposited_amount",
             "date_admitted",
             "is_rented"
         ]
